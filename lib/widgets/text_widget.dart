@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TextWidget extends StatelessWidget{
-  TextWidget({this.text, this.color, this.font, this.fontSize});
+  TextWidget({@required this.text, @required this.color, @required this.font, @required this.fontSize});
 
   final String text;
   final String font;

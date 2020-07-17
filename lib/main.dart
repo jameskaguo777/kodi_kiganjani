@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:kodi_kiganjani/screens/home.dart';
+import 'package:kodi_kiganjani/screens/income_tax_return.dart';
 import 'package:kodi_kiganjani/screens/tax_calc.dart';
 
 void main() {
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
       routes:{ 
         '/' : (context)=> Home(title: 'Kodi Kiganjani'),
         '/tax_calc' : (context) => TaxCalc(),
+        '/income_tax' : (context) => IncomeTax(),
         },
       title: 'Kodi Kiganjani',
       theme: ThemeData(

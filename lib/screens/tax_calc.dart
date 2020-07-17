@@ -85,58 +85,59 @@ class _TaxCalc extends State<TaxCalc>{
         ),
         margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
         
-        child: Container(
-          alignment: Alignment.topLeft,
-          width: size.width,
-          margin: EdgeInsets.fromLTRB(0, 35, 0, 0),
-          child: SingleChildScrollView(
-            child: Container(
-              width: size.width,
-              margin: EdgeInsets.fromLTRB(50, 5, 50, 10),
-              
-              child: 
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+          child: Container(
+            width: size.width,
+            margin: EdgeInsets.fromLTRB(50, 5, 50, 10),
+            
+            child: 
+                Form(
+                  key: _formKey,
+                  
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
 
-                        TextWidget(color: Colors.black, text: 'Tax Reference', font: 'Poppins-Medium', fontSize: 12,),
-                        SizedBox(height: 10),
-                        InputDecorator(
-                          decoration: InputDecoration(
-                              labelStyle: TextStyle(color: Colors.black12, fontFamily: 'Poppins-Medium', fontSize: 12),
-                              errorStyle: TextStyle(color: Colors.redAccent, fontSize: 12.0),
-                              hintText: 'Please select Tax Reference',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
-                          isEmpty: _currentSelectedValue == null,
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: _currentSelectedValue,
-                              isDense: true,
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  _currentSelectedValue = newValue;
-                                  // state.didChange(newValue);
-                                });
-                              },
-                              items: _currencies.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: TextWidget(color: Colors.black, text: value, font: 'Poppins-Medium', fontSize: 12,),
-                                );
-                              }).toList(),
-                            ),
+                      TextWidget(color: Colors.black, text: 'Tax Reference', font: 'Poppins-Medium', fontSize: 12,),
+                      SizedBox(height: 10),
+                      InputDecorator(
+
+                        decoration: InputDecoration(
+                            labelStyle: TextStyle(color: Colors.black12, fontFamily: 'Poppins-Medium', fontSize: 12),
+                            errorStyle: TextStyle(color: Colors.redAccent, fontSize: 12.0),
+                            hintText: 'Please select Tax Reference',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
+                        isEmpty: _currentSelectedValue == null,
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _currentSelectedValue,
+                            isDense: true,
+                            onChanged: (String newValue) {
+                              setState(() {
+                                _currentSelectedValue = newValue;
+                                // state.didChange(newValue);
+                              });
+                            },
+                            items: _currencies.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: TextWidget(color: Colors.black, text: value, font: 'Poppins-Medium', fontSize: 12,),
+                              );
+                            }).toList(),
                           ),
                         ),
-                      ],
-                    ),
-                   
-                  )
-                
-            )
-          ),
+                      ),
+                      SizedBox(height: 20),
+                      TextWidget(color: Colors.black, text: 'Amount', font: 'Poppins-Medium', fontSize: 12,),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                 
+                )
+              
+          )
         )
       )
     );

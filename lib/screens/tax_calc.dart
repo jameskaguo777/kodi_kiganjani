@@ -15,6 +15,7 @@ class _TaxCalc extends State<TaxCalc> {
   String _currentSelectedValue;
   String amount;
   final _formKey = GlobalKey<FormState>();
+  final amountController = TextEditingController();
 
   get state => initState();
 
@@ -123,6 +124,7 @@ class _TaxCalc extends State<TaxCalc> {
               ),
               SizedBox(height: 10),
               TextFormField(
+                controller: amountController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     hintText: 'Enter amount',
@@ -167,9 +169,11 @@ class _TaxCalc extends State<TaxCalc> {
   void _showDialog() {
     // flutter defined function
 
-    var y = double.parse('5343534');
-    double i = y * 0.4;
-    String soln = i as String;
+    var y = amountController.text;
+    double i = y as double;
+    double x = i * 0.4;
+    String soln = x as String;
+    String soln1 = soln + 'rer';
 
     showDialog(
       context: context,
@@ -183,7 +187,7 @@ class _TaxCalc extends State<TaxCalc> {
               fontSize: 14),
           content: Wrap(alignment: WrapAlignment.center, children: [
             TextWidget(
-                text: '$amount',
+                text: '$soln1',
                 color: darkGreenColor,
                 font: 'Poppins-Bold',
                 fontSize: 49),

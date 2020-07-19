@@ -79,40 +79,35 @@ class _TaxCalc extends State<TaxCalc> {
                 fontSize: 12,
               ),
               SizedBox(height: 10),
-              InputDecorator(
-                decoration: InputDecoration(
-                    labelStyle: TextStyle(
-                        color: Colors.black12,
-                        fontFamily: 'Poppins-Medium',
-                        fontSize: 12),
-                    errorStyle:
-                        TextStyle(color: Colors.redAccent, fontSize: 12.0),
-                    hintText: 'Please select Tax Reference',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0))),
-                isEmpty: _currentSelectedValue == null,
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _currentSelectedValue,
-                    isDense: true,
-                    onChanged: (String newValue) {
-                      setState(() {
-                        _currentSelectedValue = newValue;
-                        // state.didChange(newValue);
-                      });
-                    },
-                    items: _currencies.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: TextWidget(
-                          color: Colors.black,
-                          text: value,
-                          font: 'Poppins-Medium',
-                          fontSize: 12,
-                        ),
-                      );
-                    }).toList(),
+              DropdownButtonHideUnderline(
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                  hintText: 'Choose Tax Reference',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)
+                      )
+                    )
                   ),
+                  validator: (value) => value == null ? 'Please fill in your Tax Reference' : null,
+                  value: _currentSelectedValue,
+                  isDense: true,
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _currentSelectedValue = newValue;
+                      // state.didChange(newValue);
+                    });
+                  },
+                  items: _currencies.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: TextWidget(
+                        color: Colors.black,
+                        text: value,
+                        font: 'Poppins-Medium',
+                        fontSize: 12,
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
               SizedBox(height: 20),
@@ -124,6 +119,7 @@ class _TaxCalc extends State<TaxCalc> {
               ),
               SizedBox(height: 10),
               TextFormField(
+                autofocus: true,
                 controller: amountController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
@@ -134,7 +130,7 @@ class _TaxCalc extends State<TaxCalc> {
                   if (value.isEmpty) {
                     return 'Please enter amount';
                   } else {
-                    amount = value;
+                    // amount = value;
                   }
 
                   return null;
@@ -169,11 +165,11 @@ class _TaxCalc extends State<TaxCalc> {
   void _showDialog() {
     // flutter defined function
 
-    var y = amountController.text;
-    double i = y as double;
-    double x = i * 0.4;
-    String soln = x as String;
-    String soln1 = soln + 'rer';
+    var y = double.parse(amountController.text.trim());
+    
+    var x = y * 0.4;
+    String soln = x.toString();
+    
 
     showDialog(
       context: context,
@@ -187,7 +183,7 @@ class _TaxCalc extends State<TaxCalc> {
               fontSize: 14),
           content: Wrap(alignment: WrapAlignment.center, children: [
             TextWidget(
-                text: '$soln1',
+                text: '$soln',
                 color: darkGreenColor,
                 font: 'Poppins-Bold',
                 fontSize: 49),

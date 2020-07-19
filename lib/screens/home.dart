@@ -90,7 +90,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         FlatButton(
-                          onPressed: null,
+                          onPressed: () => Navigator.pushNamed(context, '/reg_new_business'),
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,
@@ -115,7 +115,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         FlatButton(
-                          onPressed: null,
+                          onPressed: () => Navigator.pushNamed(context, '/news'),
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,
@@ -139,7 +139,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         FlatButton(
-                          onPressed: null,
+                          onPressed: () => Navigator.pushNamed(context, '/tax_calender'),
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,

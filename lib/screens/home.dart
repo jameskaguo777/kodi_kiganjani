@@ -3,6 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:kodi_kiganjani/colors.dart';
 import 'package:kodi_kiganjani/widgets/svg_card.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   Home({Key key, this.title}) : super(key: key);
@@ -90,7 +92,8 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         FlatButton(
-                          onPressed: () => Navigator.pushNamed(context, '/reg_new_business'),
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/reg_new_business'),
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,
@@ -115,7 +118,8 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         FlatButton(
-                          onPressed: () => Navigator.pushNamed(context, '/news'),
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/news'),
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,
@@ -130,7 +134,8 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FlatButton(
-                          onPressed: null,
+                          onPressed: () => Navigator.pushNamed(
+                              context, '/notification_center'),
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,
@@ -139,7 +144,8 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         FlatButton(
-                          onPressed: () => Navigator.pushNamed(context, '/tax_calender'),
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/tax_calender'),
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,
@@ -154,7 +160,13 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FlatButton(
-                          onPressed: null,
+                          onPressed: () {
+                            final RenderBox box = context.findRenderObject();
+                            Share.share('Test',
+                                subject: 'subject',
+                                sharePositionOrigin:
+                                    box.localToGlobal(Offset.zero) & box.size);
+                          },
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,
@@ -163,12 +175,13 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         FlatButton(
-                          onPressed: null,
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/about'),
                           padding: EdgeInsets.all(0),
                           child: SVGCard(
                             isNetwork: false,
-                            asset: 'assets/images/share.svg',
-                            title: 'Share',
+                            asset: 'assets/images/whatsapp.svg',
+                            title: 'About Us',
                           ),
                         ),
                       ],
@@ -182,8 +195,8 @@ class _HomeState extends State<Home> {
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: FlatButton(
-                          color: yellowColor,
-                          onPressed: null,
+                          color: darkYellowColor,
+                          onPressed: () => _callWhatsapp(),
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -205,5 +218,40 @@ class _HomeState extends State<Home> {
                     )
                   ])),
             ))));
+  }
+
+  _lunchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _callWhatsapp() {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+              title: Text('Call or Message'),
+              content: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                direction: Axis.vertical,
+                children: [
+                  FlatButton(
+                      onPressed: () {
+                        _lunchURL('http://tel:+255757028753');
+                      },
+                      child: Text('Call')),
+                  SizedBox(height: 10,),
+                  FlatButton(
+                      onPressed: () {
+                        _lunchURL('http://tel:+255757028753');
+                      },
+                      child: Text('Whatsapp Message')),
+                ],
+              )
+            );
+        });
   }
 }

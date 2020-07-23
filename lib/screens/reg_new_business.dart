@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kodi_kiganjani/widgets/card_body.dart';
-import 'package:kodi_kiganjani/widgets/text_widget.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+
 
 class RegNewBusiness extends StatefulWidget {
   RegNewBusiness({Key key}) : super(key: key);
@@ -9,38 +9,45 @@ class RegNewBusiness extends StatefulWidget {
 }
 
 class _RegNewBusiness extends State<RegNewBusiness> {
+  final kHtml = '''<h1>Heading 1</h1>
+  <h2>Heading 2</h2>
+  <h3>Heading 3</h3>
+  <h4>Heading 4</h4>
+  <h5>Heading 5</h5>
+  <h6>Heading 6</h6>
+  <p>A paragraph with <strong>strong</strong> <em>emphasized</em> text.</p>
+
+  <p>And of course, cat image:</p>
+  <figure>
+    <img src="https://media.giphy.com/media/6VoDJzfRjJNbG/giphy-downsized.gif" width="250" height="171" />
+    <figcaption>Source: <a href="https://gph.is/QFgPA0">https://gph.is/QFgPA0</a></figcaption>
+  </figure>
+  ''';
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-      appBar: AppBar(
-        title: TextWidget(
-            text: 'Registering New Business',
-            color: Colors.black,
-            fontSize: 25,
-            font: 'Poppins-Bold'),
-        elevation: 0,
-      ),
-      body: Builder(
-          builder: (context) => SizedBox.expand(
-                child: Container(
-                  color: Colors.yellow,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        CardBody(widget: _body()),
-                      ]),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Registering New Business'),
+
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: HtmlWidget(
+              kHtml,
+              onTapUrl: (url) => showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: Text('onTapUrl'),
+                  content: Text(url),
                 ),
-              )),
-    ));
-  }
-
-
-  Widget _body() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      )
     );
   }
 }

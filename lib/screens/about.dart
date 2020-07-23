@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
-class IncomeTax extends StatefulWidget {
-  IncomeTax({Key key}) : super(key: key);
+class AboutPage extends StatefulWidget {
+  AboutPage({Key key}) : super(key: key);
 
-  _IncomeTax createState() => _IncomeTax();
+  _AboutPage createState() => _AboutPage();
 }
 
-class _IncomeTax extends State<IncomeTax> {
+class _AboutPage extends State<AboutPage> {
+
   final kHtml = '''<h1>Heading 1</h1>
   <h2>Heading 2</h2>
   <h3>Heading 3</h3>
@@ -30,7 +30,7 @@ class _IncomeTax extends State<IncomeTax> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Income Tax Return Filling'),
+          title: Text('About'),
 
         ),
         body: SingleChildScrollView(
@@ -38,22 +38,17 @@ class _IncomeTax extends State<IncomeTax> {
             padding: const EdgeInsets.all(8.0),
             child: HtmlWidget(
               kHtml,
-              onTapUrl: (url) => _lunchURL(url),
+              onTapUrl: (url) => showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: Text('onTapUrl'),
+                  content: Text(url),
+                ),
               ),
             ),
           ),
         ),
-      
+      )
     );
   }
-
-  _lunchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-
 }

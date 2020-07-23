@@ -240,13 +240,13 @@ class _HomeState extends State<Home> {
                 children: [
                   FlatButton(
                       onPressed: () {
-                        _lunchURL('http://tel:+255757028753');
+                        _lunchURL("tel:+255757028753");
                       },
                       child: Text('Call')),
                   SizedBox(height: 10,),
                   FlatButton(
                       onPressed: () {
-                        _lunchURL('http://tel:+255757028753');
+                        _lunchURL("https://wa.me/255757028753");
                       },
                       child: Text('Whatsapp Message')),
                 ],

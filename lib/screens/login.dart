@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kodi_kiganjani/API_conf/api_call.dart';
 import 'package:kodi_kiganjani/colors.dart';
+import 'package:kodi_kiganjani/helpers/auth/login_helper.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
 
 class Login extends StatefulWidget {
@@ -10,6 +12,15 @@ class Login extends StatefulWidget {
 
 class _Login extends State<Login> {
   final _formKey = GlobalKey<FormState>();
+
+  APICall _apiCall;
+  String _email, _password;
+
+  @override
+  void initState() {
+    super.initState();
+    _apiCall = APICall();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +69,13 @@ class _Login extends State<Login> {
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                         ),
-                        validator: (value) =>
-                            value.isEmpty ? 'Please enter your email' : null,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Enter email please';
+                          } else {
+                            _email = value;
+                          }
+                        },
                       ),
                     ),
                     SizedBox(
@@ -76,17 +92,22 @@ class _Login extends State<Login> {
                     Container(
                       width: MediaQuery.of(context).size.width * .7,
                       child: TextFormField(
-                        autofocus: true,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your password',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          autofocus: true,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: 'Enter your password',
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
-                        ),
-                        validator: (value) =>
-                            value.isEmpty ? 'Please enter your password' : null,
-                      ),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter your password';
+                            } else {
+                              _password = value;
+                            }
+                          }),
                     ),
                     SizedBox(
                       height: 20,
@@ -136,7 +157,30 @@ class _Login extends State<Login> {
 
   void _login() {
     if (_formKey.currentState.validate()) {
-      Navigator.pushReplacementNamed(context, '/home');
+      // Navigator.pushReplacementNamed(context, '/home');
+      print(_email + _password);
+      // _apiCall.fetchToken(_email, _password);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              // title: Text("Alert Dialog"),
+              content: FutureBuilder<LoginHelper>(
+                future: _apiCall.fetchToken(_email, _password),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    Navigator.of(context).pushReplacementNamed('/home');
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return Container(
+                    width: MediaQuery.of(context).size.width*.3,
+                    height: MediaQuery.of(context).size.width*.3,
+                    child: CircularProgressIndicator());
+                },
+              ),
+            );
+          });
     }
   }
 

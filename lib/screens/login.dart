@@ -155,11 +155,15 @@ class _Login extends State<Login> {
     );
   }
 
+  @override
+  void dispose() {
+    
+    super.dispose();
+  }
+
   void _login() {
     if (_formKey.currentState.validate()) {
-      // Navigator.pushReplacementNamed(context, '/home');
-      print(_email + _password);
-      // _apiCall.fetchToken(_email, _password);
+      
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -169,19 +173,29 @@ class _Login extends State<Login> {
                 future: _apiCall.fetchToken(_email, _password),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    Navigator.of(context).pushReplacementNamed('/home');
+
+                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.of(context).pushReplacementNamed('/home');
+                      });
+                    
+                    Navigator.pop(context);
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
-                  return Container(
-                    width: MediaQuery.of(context).size.width*.3,
-                    height: MediaQuery.of(context).size.width*.3,
-                    child: CircularProgressIndicator());
+                  return TextWidget(
+                      text: 'Loading.....',
+                      color: Colors.black87,
+                      font: 'Poppins-SemiBold',
+                      fontSize: 14);
                 },
               ),
             );
           });
     }
+  }
+
+  void _navigateHome() {
+    
   }
 
   void _register() {

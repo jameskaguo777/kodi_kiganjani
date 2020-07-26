@@ -10,15 +10,31 @@ class TaxCalculatorHelper {
   }
 }
 
-class TaxCalculatorHelperList {
-  final String name;
-  final double value;
+class NewsPostHelper {
+  // final String post;
+  // final String updatedAt;
+  final List<dynamic> data;
+  NewsPostHelper({this.data});
 
-  TaxCalculatorHelperList({this.name, this.value});
-  factory TaxCalculatorHelperList.fromMap(Map<String, dynamic> json) {
-    return TaxCalculatorHelperList(
-      name: json['name'],
-      value: json['value'],
+  factory NewsPostHelper.fromJson(Map<String, dynamic> json) {
+    return NewsPostHelper(
+      // post: json['data'][0]['post'],
+      // updatedAt: json['data'][0]['updated_at'],
+      data: json['data'],
+    );
+  }
+}
+
+class AboutInfoHelper {
+  final String post;
+  final String updatadAt;
+
+  AboutInfoHelper({this.post, this.updatadAt});
+
+  factory AboutInfoHelper.fromJson(Map<String, dynamic> json) {
+    return AboutInfoHelper(
+      post: json['data'][0]['post'],
+      updatadAt: json['data'][0]['updated_at'],
     );
   }
 }

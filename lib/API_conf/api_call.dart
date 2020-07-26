@@ -125,4 +125,47 @@ class APICall {
       throw Exception('${response.body} Error');
     }
   }
+
+
+  Future<NewsPostHelper> fetchNewsPosts(String token) async {
+    final response = await http.get(
+     NEWS_POST_INDEX_API,
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer $token",
+        'Content-Type' : 'application/json',
+        
+        }
+    );
+
+    if (response.statusCode == 200) {
+      
+
+      return NewsPostHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
+    } else {
+      
+      throw Exception('${response.body} Error');
+    }
+  }
+
+  Future<AboutInfoHelper> fetchAboutInfo(String token) async {
+    final response = await http.get(
+     ABOUT_INFO_INDEX,
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer $token",
+        'Content-Type' : 'application/json',
+        
+        }
+    );
+
+    if (response.statusCode == 200) {
+      
+
+      return AboutInfoHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
+    } else {
+      
+      throw Exception('${response.body} Error');
+    }
+  }
 }

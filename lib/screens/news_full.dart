@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:kodi_kiganjani/colors.dart';
 import 'package:kodi_kiganjani/constant.dart';
 
 import 'package:kodi_kiganjani/helpers/new_full_args.dart';
 import 'package:kodi_kiganjani/widgets/card_body.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewsFull extends StatefulWidget {
   NewsFull({
@@ -27,15 +29,18 @@ class _NewsFull extends State<NewsFull> {
       ),
       body: Builder(
           builder: (context) => SizedBox.expand(
-                child: Container(
-                  color: Colors.yellow,
-                  // margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        CardBody(widget: _body(args)),
-                      ]),
+                child: Stack(
+                  alignment: Alignment.center,
+                  
+                    children: [
+                      
+                      Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              CardBody(widget: _body(args), marginT: EdgeInsets.all(0), paddingT: EdgeInsets.all(0), colorT: Colors.white),
+                            ]),
+                    ]
                 ),
               )),
     ));
@@ -50,35 +55,51 @@ class _NewsFull extends State<NewsFull> {
       child: Wrap(
         direction: Axis.vertical,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            child: CachedNetworkImage(
-              width: size.width,
-              height: size.width * 0.6,
-              fit: BoxFit.fill,
-              imageUrl: args.imageUrl,
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  CircularProgressIndicator(value: downloadProgress.progress),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+          Container(
+            color: yellowColor,
+            width: MediaQuery.of(context).size.width,
+            child: ClipRRect(
+              
+              borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(40.0),
+                  topRight: const Radius.circular(40.0),
+
+                ),
+              child: CachedNetworkImage(
+                width: size.width,
+                height: size.width * 0.6,
+                fit: BoxFit.fill,
+                imageUrl: args.imageUrl,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    CircularProgressIndicator(value: downloadProgress.progress),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            alignment: Alignment.topCenter,
-            // child: HtmlWidget(
-            //   WEBTEXT,
-            //   onTapUrl: (url) => showDialog(
-            //     context: context,
-            //     builder: (_) => AlertDialog(
-            //       title: Text('onTapUrl'),
-            //       content: Text(url),
-            //     ),
-            //   ),
-            // ),
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+                      child: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              alignment: Alignment.topCenter,
+              child: HtmlWidget(
+                
+                            """${args.postData}""",
+                            onTapUrl: (url) => _lunchURL(url),
+                          ),
         
+            ),
           ),
         ],
       ),
     );
+  }
+
+  _lunchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

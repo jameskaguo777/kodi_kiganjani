@@ -10,31 +10,38 @@ class BlogCard extends StatelessWidget {
       {Key key,
       @required this.title,
       @required this.summary,
-      @required this.imageUrl})
+      @required this.imageUrl,
+      @required this.dataPost})
       : super(key: key);
 
   final String title, summary, imageUrl;
+
+  final dynamic dataPost;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
       width: double.infinity,
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: Wrap(
-        direction: Axis.vertical,
+        
+        direction: Axis.horizontal,
         crossAxisAlignment: WrapCrossAlignment.start,
+        alignment: WrapAlignment.spaceBetween,
         children: [
-          TextWidget(
+          
+          Container(
+            width: size.width * 0.4,
+            child: Wrap(
+              direction: Axis.vertical,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              children: [
+                TextWidget(
               text: title,
               color: Colors.black,
               font: 'Poppins-Bold',
               fontSize: 17),
-          Container(
-            width: size.width * 0.9,
-            child: Wrap(
-              direction: Axis.horizontal,
-              crossAxisAlignment: WrapCrossAlignment.start,
-              children: [
                 Container(
                   width: size.width * 0.5,
                   child: TextWidget(
@@ -43,7 +50,22 @@ class BlogCard extends StatelessWidget {
                       font: 'Poppins-Regular',
                       fontSize: 14),
                 ),
-                ClipRRect(
+                FlatButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/news_full',
+                    arguments: NewsFullArgs(dataPost['title'], imageUrl, dataPost['post']));
+              },
+              padding: EdgeInsets.all(0),
+              child: TextWidget(
+                  text: 'Learn More',
+                  color: darkYellowColor,
+                  font: 'Poppins-SemiBold',
+                  fontSize: 14)),
+              ],
+            ),
+          ),
+          
+          ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   child: CachedNetworkImage(
                     width: size.width * 0.35,
@@ -57,19 +79,7 @@ class BlogCard extends StatelessWidget {
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
-              ],
-            ),
-          ),
-          FlatButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/news_full', arguments: NewsFullArgs('Tax Payers arguments', imageUrl));
-              },
-              padding: EdgeInsets.all(0),
-              child: TextWidget(
-                  text: 'Learn More',
-                  color: darkYellowColor,
-                  font: 'Poppins-SemiBold',
-                  fontSize: 14)),
+          
         ],
       ),
     );

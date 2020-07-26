@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import '../colors.dart';
 
 class CardBody extends StatelessWidget {
-  CardBody({Key key, @required this.widget}) : super(key: key);
+  CardBody({Key key, @required this.widget, this.marginT, this.paddingT, this.colorT}) : super(key: key);
 
   final Widget widget;
+  final dynamic marginT, paddingT, colorT;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
         child: Card(
-            color: Colors.white,
+            color: colorT == null ? Colors.white : colorT,
             elevation: 20,
             shadowColor: blackColor,
             shape: RoundedRectangleBorder(
@@ -21,9 +22,9 @@ class CardBody extends StatelessWidget {
                 topRight: const Radius.circular(40.0),
               ),
             ),
-            margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+            margin: marginT == null ? EdgeInsets.fromLTRB(0, 30, 0, 0) : marginT,
             child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+              padding: paddingT == null ? EdgeInsets.fromLTRB(0, 50, 0, 0) : paddingT,
               child: widget,
             )));
   }

@@ -1,10 +1,12 @@
 class TaxCalculatorHelper {
-  final List<TaxCalculatorHelperList> taxCal;
-  
+  final List<dynamic> taxCal;
+
   TaxCalculatorHelper({this.taxCal});
 
   factory TaxCalculatorHelper.fromJson(Map<String, dynamic> json) {
-    return TaxCalculatorHelper(taxCal: json['data']);
+    return TaxCalculatorHelper(
+      taxCal: json['data'],
+    );
   }
 }
 
@@ -13,11 +15,10 @@ class TaxCalculatorHelperList {
   final double value;
 
   TaxCalculatorHelperList({this.name, this.value});
-  factory TaxCalculatorHelperList.fromJson(Map<String, dynamic> json) {
+  factory TaxCalculatorHelperList.fromMap(Map<String, dynamic> json) {
     return TaxCalculatorHelperList(
       name: json['name'],
       value: json['value'],
-
     );
   }
 }

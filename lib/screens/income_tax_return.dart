@@ -64,7 +64,7 @@ class _IncomeTax extends State<IncomeTax> {
                       print('im tired of you ');
                       if (snapshot.hasData) {
                         return HtmlWidget(
-                          """${snapshot.data.data}""",
+                          """${snapshot.data.post}""",
                           onTapUrl: (url) => _lunchURL(url),
                         );
                       } else if (snapshot.hasError) {
@@ -75,7 +75,11 @@ class _IncomeTax extends State<IncomeTax> {
                             Text("Something went wrong ${snapshot.error}")
                         ]);
                       }
-                      return Container(child: CircularProgressIndicator());
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Center(child: CircularProgressIndicator())
+                        );
                     },
                   );
                 } else if (snapshot.hasError) {

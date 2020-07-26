@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:kodi_kiganjani/API_conf/api.dart';
 import 'package:kodi_kiganjani/API_conf/api_call.dart';
+import 'package:kodi_kiganjani/colors.dart';
 import 'package:kodi_kiganjani/helpers/new_business_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -32,7 +33,7 @@ String token;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Income Tax Return Filling'),
+          title: Text('Register New Business'),
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -47,7 +48,7 @@ String token;
                       print('im tired of you ');
                       if (snapshot.hasData) {
                         return HtmlWidget(
-                          """${snapshot.data.data}""",
+                          """${snapshot.data.post}""",
                           onTapUrl: (url) => _lunchURL(url),
                         );
                       } else if (snapshot.hasError) {
@@ -58,7 +59,11 @@ String token;
                             Text("Something went wrong ${snapshot.error}")
                         ]);
                       }
-                      return Container(child: CircularProgressIndicator());
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Center(child: CircularProgressIndicator())
+                        );
                     },
                   );
                 } else if (snapshot.hasError) {

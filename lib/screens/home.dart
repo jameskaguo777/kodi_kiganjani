@@ -1,6 +1,8 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:kodi_kiganjani/colors.dart';
+import 'package:kodi_kiganjani/controllers/connectivity_co.dart';
 import 'package:kodi_kiganjani/widgets/svg_card.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
 import 'package:share/share.dart';
@@ -16,6 +18,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  ConnectivityCo connectivityCo;
+
+  @override
+  void initState() {
+    super.initState();
+    connectivityCo = ConnectivityCo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -35,6 +45,7 @@ class _HomeState extends State<Home> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               _title(),
+                              _connectivityWidget(),
                               _bodyCard(context),
                             ]),
                       ),
@@ -52,6 +63,34 @@ class _HomeState extends State<Home> {
         color: lightBrown,
       ),
     );
+  }
+
+  Widget _connectivityWidget() {
+    return FutureBuilder<dynamic>(
+        future: connectivityCo.checkConnectivityCo(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data) {
+            } else {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                color: Colors.red,
+                child: Center(
+                  child: TextWidget(
+                      text: 'Your are not connected to the Internet',
+                      color: Colors.white,
+                      font: 'Poppins-Bold',
+                      fontSize: 14),
+                ),
+              );
+            }
+
+            return Center();
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString() + ' error');
+          }
+          return Text('');
+        });
   }
 
   Widget _bodyCard(BuildContext context) {
@@ -243,15 +282,16 @@ class _HomeState extends State<Home> {
                         _lunchURL("tel:+255757028753");
                       },
                       child: Text('Call')),
-                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 10,
+                  ),
                   FlatButton(
                       onPressed: () {
                         _lunchURL("https://wa.me/255757028753");
                       },
                       child: Text('Whatsapp Message')),
                 ],
-              )
-            );
+              ));
         });
   }
 }

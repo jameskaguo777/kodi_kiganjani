@@ -1,4 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
+import 'package:kodi_kiganjani/API_conf/api.dart';
+import 'package:kodi_kiganjani/API_conf/api_call.dart';
+import 'package:kodi_kiganjani/helpers/all_helpers.dart';
 import 'package:kodi_kiganjani/widgets/card_body.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
 
@@ -12,16 +18,22 @@ class TaxCalc extends StatefulWidget {
 }
 
 class _TaxCalc extends State<TaxCalc> {
-  String _currentSelectedValue;
+  var _currentSelectedValue;
   String amount;
   final _formKey = GlobalKey<FormState>();
   final amountController = TextEditingController();
-
+  APICall _apiCall;
+  AccesTokenG _accesTokenG;
+  Future<dynamic> _futureToken;
+  List<Map<String, dynamic>> _referances;
   get state => initState();
 
   @override
   void initState() {
     super.initState();
+    _accesTokenG = AccesTokenG();
+    _apiCall = APICall();
+    _futureToken = _accesTokenG.accessTokenStorageF();
   }
 
   @override
@@ -44,14 +56,69 @@ class _TaxCalc extends State<TaxCalc> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        CardBody(widget: _form()),
+                        FutureBuilder(
+                            future: _futureToken,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return FutureBuilder<TaxCalculatorHelper>(
+                                    future:
+                                        _apiCall.fetchTaxCalc(snapshot.data),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        // print(snapshot.data.taxCal[0]['name']);
+                                        _referances = new List(
+                                            snapshot.data.taxCal.length);
+
+                                        for (var i = 0;
+                                            i < snapshot.data.taxCal.length;
+                                            i++) {
+                                          _referances[i] =
+                                              snapshot.data.taxCal[i];
+                                        }
+                                        return CardBody(
+                                            widget:
+                                                _form(snapshot.data.taxCal));
+                                      } else if (snapshot.hasError) {
+                                        return Wrap(
+                                            direction: Axis.vertical,
+                                            children: [
+                                              Icon(
+                                                Icons.error,
+                                                size: 30,
+                                              ),
+                                              Text(
+                                                  "Something went wrong ${snapshot.error}")
+                                            ]);
+                                      }
+                                      return Center(
+                                          child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: CircularProgressIndicator(
+                                          backgroundColor: darkBlueColor,
+                                        ),
+                                      ));
+                                    });
+                              } else if (snapshot.hasError) {
+                                return Wrap(
+                                    direction: Axis.vertical,
+                                    children: [
+                                      Icon(
+                                        Icons.error,
+                                        size: 30,
+                                      ),
+                                      Text(
+                                          "Something went wrong ${snapshot.error}")
+                                    ]);
+                              }
+                              return Text(snapshot.error);
+                            }),
                       ]),
                 ),
               )),
     ));
   }
 
-  Widget _form() {
+  Widget _form(List<dynamic> references) {
     final _currencies = [
       "Food",
       "Transport",
@@ -80,29 +147,29 @@ class _TaxCalc extends State<TaxCalc> {
               ),
               SizedBox(height: 10),
               DropdownButtonHideUnderline(
-                child: DropdownButtonFormField<String>(
+                child: DropdownButtonFormField<dynamic>(
                   decoration: InputDecoration(
-                  hintText: 'Choose Tax Reference',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)
-                      )
-                    )
-                  ),
-                  validator: (value) => value == null ? 'Please fill in your Tax Reference' : null,
+                      hintText: 'Choose Tax Reference',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)))),
+                  validator: (value) => value == null
+                      ? 'Please fill in your Tax Reference'
+                      : null,
                   value: _currentSelectedValue,
                   isDense: true,
-                  onChanged: (String newValue) {
+                  onChanged: (dynamic newValue) {
                     setState(() {
                       _currentSelectedValue = newValue;
+                      print(_findRefValue().toString() + ' tried');
                       // state.didChange(newValue);
                     });
                   },
-                  items: _currencies.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
+                  items: references.map((dynamic value) {
+                    return DropdownMenuItem<dynamic>(
+                      value: value['name'],
                       child: TextWidget(
                         color: Colors.black,
-                        text: value,
+                        text: value['name'],
                         font: 'Poppins-Medium',
                         fontSize: 12,
                       ),
@@ -162,14 +229,39 @@ class _TaxCalc extends State<TaxCalc> {
         ));
   }
 
+  _findRefValue() {
+    for (var i = 0; i < _referances.length; i++) {
+      if (_currentSelectedValue == _referances[i]['name']) {
+        return _referances[i]['value'];
+      }
+    }
+  }
+
   void _showDialog() {
     // flutter defined function
 
     var y = double.parse(amountController.text.trim());
-    
-    var x = y * 0.4;
+
+    var ref = _findRefValue();
+
+    // var ref = double.parse(_currentSelectedValue);
+
+    var x = y * ref;
     String soln = x.toString();
-    
+
+    FlutterMoneyFormatter fmf = FlutterMoneyFormatter(
+      amount: x,
+      settings: MoneyFormatterSettings(
+        symbol: 'Tsh',
+        thousandSeparator: ',',
+        decimalSeparator: '.',
+        symbolAndNumberSeparator: ' ',
+        fractionDigits: 3,
+        
+    )
+      );
+
+    String soln1 = fmf.output.symbolOnLeft;
 
     showDialog(
       context: context,
@@ -183,7 +275,7 @@ class _TaxCalc extends State<TaxCalc> {
               fontSize: 14),
           content: Wrap(alignment: WrapAlignment.center, children: [
             TextWidget(
-                text: '$soln',
+                text: '$soln1',
                 color: darkGreenColor,
                 font: 'Poppins-Bold',
                 fontSize: 49),

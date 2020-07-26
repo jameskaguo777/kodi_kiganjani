@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:kodi_kiganjani/API_conf/api.dart';
+import 'package:kodi_kiganjani/helpers/all_helpers.dart';
 import 'package:kodi_kiganjani/helpers/auth/login_helper.dart';
 import 'package:kodi_kiganjani/helpers/income_tax_helper.dart';
 import 'package:kodi_kiganjani/helpers/new_business_helper.dart';
@@ -91,6 +92,32 @@ class APICall {
           response.body.toString(), wrapWidth: 1024);
 
       return NewBusinessHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('${response.body} Error');
+    }
+  }
+
+  Future<TaxCalculatorHelper> fetchTaxCalc(String token) async {
+    final response = await http.get(
+     TAX_CALCULATOR_INDEX_API,
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer $token",
+        'Content-Type' : 'application/json',
+        
+        }
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+      // debugPrint('APICallddf ' +
+      //     response.body.toString(), wrapWidth: 1024);
+
+      return TaxCalculatorHelper.fromJson(json.decode(response.body));
       // return response.body.toString();
     } else {
       // If the server did not return a 200 OK response,

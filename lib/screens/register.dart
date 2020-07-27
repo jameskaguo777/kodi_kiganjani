@@ -1,5 +1,8 @@
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:kodi_kiganjani/API_conf/api_call.dart';
 import 'package:kodi_kiganjani/colors.dart';
+import 'package:kodi_kiganjani/helpers/auth/login_helper.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
 
 class Register extends StatefulWidget {
@@ -11,6 +14,14 @@ class Register extends StatefulWidget {
 class _Register extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   String _confirmPassword;
+  APICall _apiCall;
+  String _email, _password, _fullname, _deviceName = 'Failed';
+
+  @override
+  void initState() {
+    super.initState();
+    _apiCall = APICall();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,18 +62,22 @@ class _Register extends State<Register> {
                     Container(
                       width: MediaQuery.of(context).size.width * .7,
                       child: TextFormField(
-                        autofocus: true,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your Full name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          autofocus: true,
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            hintText: 'Enter your Full name',
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
-                        ),
-                        validator: (value) => value.isEmpty
-                            ? 'Please enter your full name'
-                            : null,
-                      ),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter your full name';
+                            } else {
+                              _fullname = value;
+                            }
+                          }),
                     ),
                     SizedBox(
                       height: 20,
@@ -78,17 +93,22 @@ class _Register extends State<Register> {
                     Container(
                       width: MediaQuery.of(context).size.width * .7,
                       child: TextFormField(
-                        autofocus: true,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your email',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          autofocus: true,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            hintText: 'Enter your email',
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
-                        ),
-                        validator: (value) =>
-                            value.isEmpty ? 'Please enter your email' : null,
-                      ),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter your email';
+                            } else {
+                              _email = value;
+                            }
+                          }),
                     ),
                     SizedBox(
                       height: 20,
@@ -116,13 +136,11 @@ class _Register extends State<Register> {
                           if (value.isEmpty) {
                             return 'Please enter your password';
                           } else {
-                            if (value.length < 5){
+                            if (value.length < 5) {
                               return 'Your password has to have more than 4 characters';
                             } else {
                               _confirmPassword = value;
                             }
-                              
-                            
                           }
                           return null;
                         },
@@ -142,18 +160,22 @@ class _Register extends State<Register> {
                     Container(
                       width: MediaQuery.of(context).size.width * .7,
                       child: TextFormField(
-                        autofocus: true,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your confirm password',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          autofocus: true,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: 'Enter password to confirm password',
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
-                        ),
-                        validator: (value) => _confirmPassword != value
-                            ? 'password don\'t match'
-                            : null,
-                      ),
+                          validator: (value) {
+                            if (_confirmPassword != value) {
+                              return 'password don\'t match';
+                            } else {
+                              _password = value;
+                            }
+                          }),
                     ),
                     SizedBox(
                       height: 20,
@@ -186,5 +208,41 @@ class _Register extends State<Register> {
     );
   }
 
-  void _register() {}
+  void _register() {
+    if (_formKey.currentState.validate()) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              // title: Text("Alert Dialog"),
+              content: FutureBuilder<LoginHelper>(
+                future: _apiCall.fetchRegister(_fullname,_email, _password, _deviceName),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.of(context).pushReplacementNamed('/home');
+                    });
+
+                    Navigator.pop(context);
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return TextWidget(
+                      text: 'Loading.....',
+                      color: Colors.black87,
+                      font: 'Poppins-SemiBold',
+                      fontSize: 14);
+                },
+              ),
+            );
+          });
+    }
+  }
+
+  void _getDeviceName() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    _deviceName = androidInfo.model;
+
+  }
 }

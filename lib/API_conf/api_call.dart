@@ -13,16 +13,47 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class APICall {
   AccesTokenG accessToken = AccesTokenG();
-  Future<LoginHelper> fetchToken(String email, String password) async {
+  Future<LoginHelper> fetchToken(String email, String password, String deviceName) async {
     String jsonData = json.encode({
       'email': email,
       'password': password,
-      'device_name': 'LG V30',
+      'device_name': deviceName,
     });
 
     // print(response.body);
     final response = await http.post(
       API + '/sanctum/token',
+      body: jsonData,
+      headers: _setHeaders(),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      dynamic token =
+          LoginHelper.fromJson(json.decode(response.body)).accessToken;
+      print(LoginHelper.fromJson(json.decode(response.body)).accessToken);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('access_token', token);
+      return LoginHelper.fromJson(json.decode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('${response.body} ');
+    }
+  }
+
+  Future<LoginHelper> fetchRegister(String fullname, String email, String password, String deviceName) async {
+    String jsonData = json.encode({
+      'name': fullname,
+      'email': email,
+      'password': password,
+      'device_name': deviceName,
+    });
+
+    // print(response.body);
+    final response = await http.post(
+      REGISTER_API,
       body: jsonData,
       headers: _setHeaders(),
     );

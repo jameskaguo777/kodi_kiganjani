@@ -1,3 +1,4 @@
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:kodi_kiganjani/API_conf/api_call.dart';
 import 'package:kodi_kiganjani/colors.dart';
@@ -15,11 +16,13 @@ class _Login extends State<Login> {
 
   APICall _apiCall;
   String _email, _password;
+  String _deviceName = 'Failed';
 
   @override
   void initState() {
     super.initState();
     _apiCall = APICall();
+    _getDeviceName();
   }
 
   @override
@@ -157,27 +160,24 @@ class _Login extends State<Login> {
 
   @override
   void dispose() {
-    
     super.dispose();
   }
 
   void _login() {
     if (_formKey.currentState.validate()) {
-      
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               // title: Text("Alert Dialog"),
               content: FutureBuilder<LoginHelper>(
-                future: _apiCall.fetchToken(_email, _password),
+                future: _apiCall.fetchToken(_email, _password, _deviceName),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.of(context).pushReplacementNamed('/home');
+                    });
 
-                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Navigator.of(context).pushReplacementNamed('/home');
-                      });
-                    
                     Navigator.pop(context);
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
@@ -194,11 +194,16 @@ class _Login extends State<Login> {
     }
   }
 
-  void _navigateHome() {
-    
-  }
+  void _navigateHome() {}
 
   void _register() {
     Navigator.pushNamed(context, '/register');
+  }
+
+  void _getDeviceName() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    _deviceName = androidInfo.model;
+
   }
 }

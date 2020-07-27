@@ -1,11 +1,15 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:kodi_kiganjani/API_conf/api.dart';
+import 'package:kodi_kiganjani/API_conf/api_call.dart';
 import 'package:kodi_kiganjani/colors.dart';
 import 'package:kodi_kiganjani/controllers/connectivity_co.dart';
+import 'package:kodi_kiganjani/helpers/all_helpers.dart';
 import 'package:kodi_kiganjani/widgets/svg_card.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
@@ -20,21 +24,23 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   ConnectivityCo connectivityCo;
 
+  APICall _apiCall;
+  AccesTokenG _accesTokenG;
+  Future<dynamic> _futureToken;
+
   @override
   void initState() {
     super.initState();
     connectivityCo = ConnectivityCo();
+    _accesTokenG = AccesTokenG();
+    _apiCall = APICall();
+    _futureToken = _accesTokenG.accessTokenStorageF();
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            // appBar: AppBar(
-            //   elevation: 0,
-
-            //   title: Text(widget.title),
-            // ),
             body: Builder(
                 builder: (context) => SizedBox.expand(
                       child: Container(
@@ -54,13 +60,31 @@ class _HomeState extends State<Home> {
 
   Widget _title() {
     return Container(
-      margin: EdgeInsets.fromLTRB(35, 20, 0, 0),
-      width: double.infinity,
-      child: TextWidget(
-        text: 'Kodi Kiganjani',
-        fontSize: 28,
-        font: 'Poppins-Bold',
-        color: lightBrown,
+      margin: EdgeInsets.fromLTRB(35, 20, 10, 0),
+      width: MediaQuery.of(context).size.width,
+      child: Wrap(
+        direction: Axis.horizontal,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        alignment: WrapAlignment.spaceBetween,
+        children: [
+          TextWidget(
+            text: 'Kodi Kiganjani',
+            fontSize: 28,
+            font: 'Poppins-Bold',
+            color: lightBrown,
+          ),
+          FlatButton.icon(
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString('access_token', '0');
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.of(context).pushReplacementNamed('/login');
+                      });
+          }, 
+          icon: Icon(Icons.exit_to_app), 
+          label: Text('Logout')),
+          
+        ],
       ),
     );
   }
@@ -272,26 +296,69 @@ class _HomeState extends State<Home> {
         context: context,
         builder: (_) {
           return AlertDialog(
-              title: Text('Call or Message'),
-              content: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                direction: Axis.vertical,
-                children: [
-                  FlatButton(
-                      onPressed: () {
-                        _lunchURL("tel:+255757028753");
-                      },
-                      child: Text('Call')),
-                  SizedBox(
-                    height: 10,
+            title: Text('Call or Message'),
+            content: FutureBuilder(
+              future: _futureToken,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return FutureBuilder<ContactHelper>(
+                      future: _apiCall.fetchContactsT(snapshot.data),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          String whatsapp, call;
+
+                          for (var i = 0; i < snapshot.data.data.length; i++) {
+                            if (snapshot.data.data[i]['name']
+                                .toString()
+                                .contains('Whatsapp')) {
+                              whatsapp =
+                                  snapshot.data.data[i]['phone'].toString();
+                            } else if (snapshot.data.data[i]['name']
+                                .toString()
+                                .contains('Call')) {
+                              call = snapshot.data.data[i]['phone'].toString();
+                            }
+                          }
+
+                          return Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            direction: Axis.vertical,
+                            children: [
+                              FlatButton(
+                                  onPressed: () {
+                                    _lunchURL("tel:" + call);
+                                  },
+                                  child: Text('Call')),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              FlatButton(
+                                  onPressed: () {
+                                    _lunchURL("https://wa.me/" + whatsapp);
+                                  },
+                                  child: Text('Whatsapp Message')),
+                            ],
+                          );
+                        }
+                        return Center(
+                            child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(
+                            backgroundColor: darkBlueColor,
+                          ),
+                        ));
+                      });
+                }
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(
+                    backgroundColor: darkBlueColor,
                   ),
-                  FlatButton(
-                      onPressed: () {
-                        _lunchURL("https://wa.me/255757028753");
-                      },
-                      child: Text('Whatsapp Message')),
-                ],
-              ));
+                ));
+              },
+            ),
+          );
         });
   }
 }

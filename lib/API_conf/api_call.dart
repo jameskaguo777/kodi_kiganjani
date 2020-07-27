@@ -168,4 +168,68 @@ class APICall {
       throw Exception('${response.body} Error');
     }
   }
+
+
+  Future<NotificationCenterHelper> fetchNotificationT(String token) async {
+    final response = await http.get(
+     NOTIFICATION_CENTER_INDEX_API,
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer $token",
+        'Content-Type' : 'application/json',
+        
+        }
+    );
+
+    if (response.statusCode == 200) {
+      
+
+      return NotificationCenterHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
+    } else {
+      
+      throw Exception('${response.body} Error');
+    }
+  }
+
+  Future<TaxCalenderHelper> fetchTaxCalenderT(String token) async {
+    final response = await http.get(
+     TAX_CALENDER_INDEX_API,
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer $token",
+        'Content-Type' : 'application/json',
+        
+        }
+    );
+
+    if (response.statusCode == 200) {
+      
+
+      return TaxCalenderHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
+    } else {
+      
+      throw Exception('${response.body} Error');
+    }
+  }
+
+  Future<ContactHelper> fetchContactsT(String token) async {
+    final response = await http.get(
+     CONTACT_INFO_INDEX,
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer $token",
+        'Content-Type' : 'application/json',
+        
+        }
+    );
+
+    if (response.statusCode == 200) {
+      
+
+      return ContactHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
+    } else {
+      
+      throw Exception('${response.body} Error');
+    }
+  }
 }

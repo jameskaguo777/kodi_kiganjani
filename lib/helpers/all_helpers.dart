@@ -38,3 +38,39 @@ class AboutInfoHelper {
     );
   }
 }
+
+class NotificationCenterHelper {
+  final List<dynamic> data;
+
+  NotificationCenterHelper({this.data});
+
+  factory NotificationCenterHelper.fromJson(Map<String, dynamic> json) {
+    return NotificationCenterHelper(
+      data: json['data'],
+    );
+  }
+}
+
+class TaxCalenderHelper {
+  final List<dynamic> data;
+
+  TaxCalenderHelper({this.data});
+
+  factory TaxCalenderHelper.fromJson(Map<String, dynamic> json) {
+    return TaxCalenderHelper(
+      data: json['data'],
+    );
+  }
+}
+
+class ContactHelper {
+  final List<dynamic> data;
+
+  ContactHelper({this.data});
+
+  factory ContactHelper.fromJson(Map<String, dynamic> json) {
+    return ContactHelper(
+      data: json['data'],
+    );
+  }
+}

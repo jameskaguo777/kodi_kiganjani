@@ -3,6 +3,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:kodi_kiganjani/API_conf/api.dart';
+import 'package:kodi_kiganjani/API_conf/api_call.dart';
+import 'package:kodi_kiganjani/colors.dart';
+import 'package:kodi_kiganjani/helpers/all_helpers.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 // Example holidays
@@ -13,7 +17,6 @@ final Map<DateTime, List> _holidays = {
   DateTime(2019, 4, 21): ['Easter Sunday'],
   DateTime(2019, 4, 22): ['Easter Monday'],
 };
-
 
 class TaxCalender extends StatefulWidget {
   TaxCalender({Key key, this.title}) : super(key: key);
@@ -29,28 +32,25 @@ class _TaxCalender extends State<TaxCalender> with TickerProviderStateMixin {
   List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
+  APICall _apiCall;
+  AccesTokenG _accesTokenG;
+  Future<dynamic> _futureToken;
 
   @override
   void initState() {
     super.initState();
+
+    _accesTokenG = AccesTokenG();
+    _apiCall = APICall();
+    _futureToken = _accesTokenG.accessTokenStorageF();
     final _selectedDay = DateTime.now();
 
     _events = {
-      _selectedDay.subtract(Duration(days: 30)): ['PayTax', 'Event B0', 'Event C0'],
-      _selectedDay.subtract(Duration(days: 27)): ['Pay Land'],
-      _selectedDay.subtract(Duration(days: 20)): ['Pay Tada', 'Event B2', 'Event C2', 'Event D2'],
-      _selectedDay.subtract(Duration(days: 16)): ['Event A3', 'Event B3'],
-      _selectedDay.subtract(Duration(days: 10)): ['Event A4', 'Event B4', 'Event C4'],
-      _selectedDay.subtract(Duration(days: 4)): ['Event A5', 'Event B5', 'Event C5'],
-      _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
-      _selectedDay: ['Pay Tax', 'Pay Land', 'Pay Time', 'Event D7'],
-      _selectedDay.add(Duration(days: 1)): ['Event A8', 'Event B8', 'Event C8', 'Event D8'],
-      _selectedDay.add(Duration(days: 3)): Set.from(['Event A9', 'Event A9', 'Event B9']).toList(),
-      _selectedDay.add(Duration(days: 7)): ['Event A10', 'Event B10', 'Event C10'],
-      _selectedDay.add(Duration(days: 11)): ['Event A11', 'Event B11'],
-      _selectedDay.add(Duration(days: 17)): ['Event A12', 'Event B12', 'Event C12', 'Event D12'],
-      _selectedDay.add(Duration(days: 22)): ['Event A13', 'Event B13'],
-      _selectedDay.add(Duration(days: 26)): ['Event A14', 'Event B14', 'Event C14'],
+      _selectedDay.subtract(Duration(days: 30)): [
+        'PayTax',
+        'Event B0',
+        'Event C0'
+      ],
     };
 
     _selectedEvents = _events[_selectedDay] ?? [];
@@ -78,11 +78,13 @@ class _TaxCalender extends State<TaxCalender> with TickerProviderStateMixin {
     });
   }
 
-  void _onVisibleDaysChanged(DateTime first, DateTime last, CalendarFormat format) {
+  void _onVisibleDaysChanged(
+      DateTime first, DateTime last, CalendarFormat format) {
     print('CALLBACK: _onVisibleDaysChanged');
   }
 
-  void _onCalendarCreated(DateTime first, DateTime last, CalendarFormat format) {
+  void _onCalendarCreated(
+      DateTime first, DateTime last, CalendarFormat format) {
     print('CALLBACK: _onCalendarCreated');
   }
 
@@ -92,52 +94,81 @@ class _TaxCalender extends State<TaxCalender> with TickerProviderStateMixin {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          // Switch out 2 lines below to play with TableCalendar's settings
-          //-----------------------
-          _buildTableCalendar(),
-          // _buildTableCalendarWithBuilders(),
-          const SizedBox(height: 8.0),
-          _buildButtons(),
-          const SizedBox(height: 8.0),
-          Expanded(child: _buildEventList()),
-        ],
-      ),
-    );
-  }
+      body: FutureBuilder(
+        future: _futureToken,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return FutureBuilder<TaxCalenderHelper>(
+                future: _apiCall.fetchTaxCalenderT(snapshot.data),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    var dataE = [];
+                    Map<DateTime, List> other = {};
+                    
+                    for (var i = 0; i < snapshot.data.data.length; i++) {
+                      // for (var x = 0; x < snapshot.data.data.length; x++) {
+                      //   if (snapshot.data.data[i]['tax_date'].toString().contains(snapshot.data.data[x]['tax_date'].toString())
+                      //       ) {
+                      //         if (!dataE.contains(snapshot.data.data[x]['summary'])) {
+                                
+                      //         }
+                          
+                      //     // other.putIfAbsent(
+                      //     //   DateTime.parse(snapshot.data.data[i]['tax_date']), () => dataE);
+                      //   }
+                       
+                      // }
+                              if (!dataE.contains(snapshot.data.data[i]['summary'])) {
+                                dataE.add(snapshot.data.data[i]['summary']);
+                              }
+                      
+                      other.putIfAbsent(
+                            DateTime.parse(snapshot.data.data[i]['tax_date']), () => [snapshot.data.data[i]['summary'].toString()]);
+                      
+                        
+                        
+                      
+                    }
+                     _events.addAll(other);
 
-  // Simple TableCalendar configuration (using Styles)
-  Widget _buildTableCalendar() {
-    return TableCalendar(
-      calendarController: _calendarController,
-      events: _events,
-      holidays: _holidays,
-      startingDayOfWeek: StartingDayOfWeek.monday,
-      calendarStyle: CalendarStyle(
-        selectedColor: Colors.deepOrange[400],
-        todayColor: Colors.deepOrange[200],
-        markersColor: Colors.brown[700],
-        outsideDaysVisible: false,
+                    return Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        // Switch out 2 lines below to play with TableCalendar's settings
+                        //-----------------------
+                        // _buildTableCalendar(),
+                        _buildTableCalendarWithBuilders(),
+
+                        const SizedBox(height: 8.0),
+                        Expanded(child: _buildEventList()),
+                      ],
+                    );
+                  }
+                  return Center(
+                      child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(
+                      backgroundColor: darkBlueColor,
+                    ),
+                  ));
+                });
+          }
+          return Center(
+              child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircularProgressIndicator(
+              backgroundColor: darkBlueColor,
+            ),
+          ));
+        },
       ),
-      headerStyle: HeaderStyle(
-        formatButtonTextStyle: TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
-        formatButtonDecoration: BoxDecoration(
-          color: Colors.deepOrange[400],
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-      ),
-      onDaySelected: _onDaySelected,
-      onVisibleDaysChanged: _onVisibleDaysChanged,
-      onCalendarCreated: _onCalendarCreated,
     );
   }
 
   // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
     return TableCalendar(
-      locale: 'pl_PL',
+      locale: 'en_US',
       calendarController: _calendarController,
       events: _events,
       holidays: _holidays,
@@ -233,7 +264,9 @@ class _TaxCalender extends State<TaxCalender> with TickerProviderStateMixin {
         shape: BoxShape.rectangle,
         color: _calendarController.isSelected(date)
             ? Colors.brown[500]
-            : _calendarController.isToday(date) ? Colors.brown[300] : Colors.blue[400],
+            : _calendarController.isToday(date)
+                ? Colors.brown[300]
+                : Colors.blue[400],
       ),
       width: 16.0,
       height: 16.0,
@@ -257,55 +290,6 @@ class _TaxCalender extends State<TaxCalender> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildButtons() {
-    final dateTime = _events.keys.elementAt(_events.length - 2);
-
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            RaisedButton(
-              child: Text('Month'),
-              onPressed: () {
-                setState(() {
-                  _calendarController.setCalendarFormat(CalendarFormat.month);
-                });
-              },
-            ),
-            RaisedButton(
-              child: Text('2 weeks'),
-              onPressed: () {
-                setState(() {
-                  _calendarController.setCalendarFormat(CalendarFormat.twoWeeks);
-                });
-              },
-            ),
-            RaisedButton(
-              child: Text('Week'),
-              onPressed: () {
-                setState(() {
-                  _calendarController.setCalendarFormat(CalendarFormat.week);
-                });
-              },
-            ),
-          ],
-        ),
-        const SizedBox(height: 8.0),
-        RaisedButton(
-          child: Text('Set day ${dateTime.day}-${dateTime.month}-${dateTime.year}'),
-          onPressed: () {
-            _calendarController.setSelectedDay(
-              DateTime(dateTime.year, dateTime.month, dateTime.day),
-              runCallback: true,
-            );
-          },
-        ),
-      ],
-    );
-  }
-
   Widget _buildEventList() {
     return ListView(
       children: _selectedEvents
@@ -314,7 +298,8 @@ class _TaxCalender extends State<TaxCalender> with TickerProviderStateMixin {
                   border: Border.all(width: 0.8),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: ListTile(
                   title: Text(event.toString()),
                   onTap: () => print('$event tapped!'),
@@ -324,3 +309,29 @@ class _TaxCalender extends State<TaxCalender> with TickerProviderStateMixin {
     );
   }
 }
+
+// Simple TableCalendar configuration (using Styles)
+// Widget _buildTableCalendar() {
+//   return TableCalendar(
+//     calendarController: _calendarController,
+//     events: _events,
+//     holidays: _holidays,
+//     startingDayOfWeek: StartingDayOfWeek.monday,
+//     calendarStyle: CalendarStyle(
+//       selectedColor: Colors.deepOrange[400],
+//       todayColor: Colors.deepOrange[200],
+//       markersColor: Colors.brown[700],
+//       outsideDaysVisible: false,
+//     ),
+//     headerStyle: HeaderStyle(
+//       formatButtonTextStyle: TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+//       formatButtonDecoration: BoxDecoration(
+//         color: Colors.deepOrange[400],
+//         borderRadius: BorderRadius.circular(16.0),
+//       ),
+//     ),
+//     onDaySelected: _onDaySelected,
+//     onVisibleDaysChanged: _onVisibleDaysChanged,
+//     onCalendarCreated: _onCalendarCreated,
+//   );
+// }

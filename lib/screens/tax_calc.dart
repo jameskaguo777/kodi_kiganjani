@@ -149,7 +149,7 @@ class _TaxCalc extends State<TaxCalc> {
               DropdownButtonHideUnderline(
                 child: DropdownButtonFormField<dynamic>(
                   decoration: InputDecoration(
-                      hintText: 'Choose Tax Reference',
+                      hintText: 'Choose Tax Ref',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)))),
                   validator: (value) => value == null

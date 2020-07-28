@@ -49,72 +49,72 @@ class _TaxCalc extends State<TaxCalc> {
         elevation: 0,
       ),
       body: Builder(
-          builder: (context) => SizedBox.expand(
-                child: Container(
-                  color: Colors.yellow,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        FutureBuilder(
-                            future: _futureToken,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return FutureBuilder<TaxCalculatorHelper>(
-                                    future:
-                                        _apiCall.fetchTaxCalc(snapshot.data),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        // print(snapshot.data.taxCal[0]['name']);
-                                        _referances = new List(
-                                            snapshot.data.taxCal.length);
+          builder: (context) => Container(
+            color: Colors.yellow,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  FutureBuilder(
+                      future: _futureToken,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return FutureBuilder<TaxCalculatorHelper>(
+                              future:
+                                  _apiCall.fetchTaxCalc(snapshot.data),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  // print(snapshot.data.taxCal[0]['name']);
+                                  _referances = new List(
+                                      snapshot.data.taxCal.length);
 
-                                        for (var i = 0;
-                                            i < snapshot.data.taxCal.length;
-                                            i++) {
-                                          _referances[i] =
-                                              snapshot.data.taxCal[i];
-                                        }
-                                        return CardBody(
-                                            widget:
-                                                _form(snapshot.data.taxCal));
-                                      } else if (snapshot.hasError) {
-                                        return Wrap(
-                                            direction: Axis.vertical,
-                                            children: [
-                                              Icon(
-                                                Icons.error,
-                                                size: 30,
-                                              ),
-                                              Text(
-                                                  "Something went wrong ${snapshot.error}")
-                                            ]);
-                                      }
-                                      return Center(
-                                          child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: CircularProgressIndicator(
-                                          backgroundColor: darkBlueColor,
+                                  for (var i = 0;
+                                      i < snapshot.data.taxCal.length;
+                                      i++) {
+                                    _referances[i] =
+                                        snapshot.data.taxCal[i];
+                                  }
+                                  return Expanded(
+                                                                      child: CardBody(
+                                        widget:
+                                            _form(snapshot.data.taxCal)),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Wrap(
+                                      direction: Axis.vertical,
+                                      children: [
+                                        Icon(
+                                          Icons.error,
+                                          size: 30,
                                         ),
-                                      ));
-                                    });
-                              } else if (snapshot.hasError) {
-                                return Wrap(
-                                    direction: Axis.vertical,
-                                    children: [
-                                      Icon(
-                                        Icons.error,
-                                        size: 30,
-                                      ),
-                                      Text(
-                                          "Something went wrong ${snapshot.error}")
-                                    ]);
-                              }
-                              return Text(snapshot.error);
-                            }),
-                      ]),
-                ),
-              )),
+                                        Text(
+                                            "Something went wrong ${snapshot.error}")
+                                      ]);
+                                }
+                                return Center(
+                                    child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: darkBlueColor,
+                                  ),
+                                ));
+                              });
+                        } else if (snapshot.hasError) {
+                          return Wrap(
+                              direction: Axis.vertical,
+                              children: [
+                                Icon(
+                                  Icons.error,
+                                  size: 30,
+                                ),
+                                Text(
+                                    "Something went wrong ${snapshot.error}")
+                              ]);
+                        }
+                        return Text(snapshot.error);
+                      }),
+                ]),
+          )),
     ));
   }
 

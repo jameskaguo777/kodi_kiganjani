@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:kodi_kiganjani/screens/about.dart';
 
@@ -12,8 +15,26 @@ import 'package:kodi_kiganjani/screens/register.dart';
 import 'package:kodi_kiganjani/screens/splash_screen.dart';
 import 'package:kodi_kiganjani/screens/tax_calc.dart';
 import 'package:kodi_kiganjani/screens/tax_calender.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 void main() {
+  Crashlytics.instance.enableInDevMode = true;
+
+  // Pass all uncaught errors from the framework to Crashlytics.
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+
+  runZoned(() {
+    runApp(MyApp());
+  }, onError: Crashlytics.instance.recordError);
+
+//   Isolate.current.addErrorListener(RawReceivePort((pair) async {
+//   final List<dynamic> errorAndStacktrace = pair;
+//   await Crashlytics.instance.recordError(
+//     errorAndStacktrace.first,
+//     errorAndStacktrace.last,
+//   );
+// }).sendPort);
+
   runApp(MyApp());
 }
 

@@ -40,18 +40,16 @@ class _NotificationCenter extends State<NotificationCenter> {
         elevation: 0,
       ),
       body: Builder(
-          builder: (context) => SizedBox.expand(
-                child: Container(
-                  color: Colors.yellow,
-                  // margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        CardBody(widget: _body()),
-                      ]),
-                ),
-              )),
+          builder: (context) => Container(
+            color: Colors.yellow,
+            // margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(child: CardBody(widget: _body())),
+                ]),
+          )),
     ));
   }
 

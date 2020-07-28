@@ -38,7 +38,7 @@ class _NewsFull extends State<NewsFull> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              CardBody(widget: _body(args), marginT: EdgeInsets.all(0), paddingT: EdgeInsets.all(0), colorT: Colors.white),
+                              Expanded(child: CardBody(widget: _body(args), marginT: EdgeInsets.all(0), paddingT: EdgeInsets.all(0), colorT: Colors.white)),
                             ]),
                     ]
                 ),

@@ -9,7 +9,48 @@ const WEBTEXT = """<h2>What is Lorem Ipsum?</h2>
 </div><div>""";
 
 const TAXVALUE = {
-  'tax1' : 0.04,
-  'tax2' : 0.18,
-  'tax3' : 0.20,
+  'tax1': 0.04,
+  'tax2': 0.18,
+  'tax3': 0.20,
 };
+
+const MENUITEMS = 
+
+  [
+    {
+      'title' : 'Income Tax\nReturn Filling',
+      'route_name' : '/income_tax',
+      'asset' : 'assets/images/invoice.svg',
+    },
+    {
+      'title' : 'Registration/\nNew Business',
+      'route_name' : '/reg_new_business',
+      'asset' : 'assets/images/file.svg',
+    },
+    {
+      'title' : 'Tax Calculator',
+      'route_name' : '/tax_calc',
+      'asset' : 'assets/images/calculator.svg',
+    },
+    {
+      'title' : 'News',
+      'route_name' : '/news',
+      'asset' : 'assets/images/newspaper.svg',
+    },
+    {
+      'title' : 'Notification',
+      'route_name' : '/notification_center',
+      'asset' : 'assets/images/bell.svg',
+    },
+    {
+      'title' : 'Tax Calendar',
+      'route_name' : '/tax_calender',
+      'asset' : 'assets/images/calendar.svg',
+    },
+    {
+      'title' : 'About Us',
+      'route_name' : '/about',
+      'asset' : 'assets/images/whatsapp.svg',
+    },
+    
+  ];

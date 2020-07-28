@@ -10,22 +10,21 @@ class CardBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Card(
-            color: colorT == null ? Colors.white : colorT,
-            elevation: 20,
-            shadowColor: blackColor,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.white10, width: 2),
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(40.0),
-                topRight: const Radius.circular(40.0),
-              ),
-            ),
-            margin: marginT == null ? EdgeInsets.fromLTRB(0, 30, 0, 0) : marginT,
-            child: SingleChildScrollView(
-              padding: paddingT == null ? EdgeInsets.fromLTRB(0, 50, 0, 0) : paddingT,
-              child: widget,
-            )));
+    return Card(
+        color: colorT == null ? Colors.white : colorT,
+        elevation: 20,
+        shadowColor: blackColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white10, width: 2),
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(40.0),
+            topRight: const Radius.circular(40.0),
+          ),
+        ),
+        margin: marginT == null ? EdgeInsets.fromLTRB(0, 30, 0, 0) : marginT,
+        child: SingleChildScrollView(
+          padding: paddingT == null ? EdgeInsets.fromLTRB(0, 50, 0, 0) : paddingT,
+          child: widget,
+        ));
   }
 }

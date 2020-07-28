@@ -6,6 +6,7 @@ import 'package:kodi_kiganjani/API_conf/api_call.dart';
 import 'package:kodi_kiganjani/colors.dart';
 import 'package:kodi_kiganjani/controllers/connectivity_co.dart';
 import 'package:kodi_kiganjani/helpers/all_helpers.dart';
+import 'package:kodi_kiganjani/widgets/card_body.dart';
 import 'package:kodi_kiganjani/widgets/svg_card.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
 import 'package:share/share.dart';
@@ -42,10 +43,12 @@ class _HomeState extends State<Home> {
     return SafeArea(
         child: Scaffold(
             body: Builder(
-                builder: (context) => SizedBox.expand(
-                      child: Container(
-                        color: yellowColor,
-                        // width: MainAxisSize.max,
+                builder: (context) => Container(
+                      color: yellowColor,
+                      width: MediaQuery.of(context).size.width,
+                      // width: MainAxisSize.max,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             mainAxisSize: MainAxisSize.max,
@@ -69,21 +72,20 @@ class _HomeState extends State<Home> {
         children: [
           TextWidget(
             text: 'Kodi Kiganjani',
-            fontSize: 28,
+            fontSize: 18,
             font: 'Poppins-Bold',
             color: lightBrown,
           ),
           FlatButton.icon(
-            onPressed: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString('access_token', '0');
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Navigator.of(context).pushReplacementNamed('/login');
-                      });
-          }, 
-          icon: Icon(Icons.exit_to_app), 
-          label: Text('Logout')),
-          
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('access_token', '0');
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.of(context).pushReplacementNamed('/login');
+                });
+              },
+              icon: Icon(Icons.exit_to_app),
+              label: Text('Logout')),
         ],
       ),
     );
@@ -118,169 +120,162 @@ class _HomeState extends State<Home> {
   }
 
   Widget _bodyCard(BuildContext context) {
-    return Expanded(
-        child: Card(
-            color: lightBrown,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: lightBrown, width: 1),
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(40.0),
-                topRight: const Radius.circular(40.0),
+    return Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: CardBody(
+          marginT: EdgeInsets.fromLTRB(0, 25, 0, 0),
+          paddingT: EdgeInsets.all(0),
+          widget: _menuItems(),
+          colorT: lightBrown,
+        ));
+  }
+
+  Widget _menuItems() {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        // crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            direction: Axis.horizontal,
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              FlatButton(
+                padding: EdgeInsets.all(0),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/income_tax');
+                },
+                child: SVGCard(
+                  isNetwork: false,
+                  asset: 'assets/images/invoice.svg',
+                  title: 'Income Tax\nReturn Filling',
+                ),
               ),
+              FlatButton(
+                onPressed: () =>
+                    Navigator.pushNamed(context, '/reg_new_business'),
+                padding: EdgeInsets.all(0),
+                child: SVGCard(
+                  isNetwork: false,
+                  asset: 'assets/images/file.svg',
+                  title: 'Registration/\nNew Business',
+                ),
+              ),
+            ],
+          ),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            direction: Axis.horizontal,
+            children: [
+              FlatButton(
+                onPressed: () => Navigator.pushNamed(context, '/tax_calc'),
+                padding: EdgeInsets.all(0),
+                child: SVGCard(
+                  isNetwork: false,
+                  asset: 'assets/images/calculator.svg',
+                  title: 'Tax Calculator',
+                ),
+              ),
+              FlatButton(
+                onPressed: () => Navigator.pushNamed(context, '/news'),
+                padding: EdgeInsets.all(0),
+                child: SVGCard(
+                  isNetwork: false,
+                  asset: 'assets/images/newspaper.svg',
+                  title: 'News',
+                ),
+              ),
+            ],
+          ),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            direction: Axis.horizontal,
+            children: [
+              FlatButton(
+                onPressed: () =>
+                    Navigator.pushNamed(context, '/notification_center'),
+                padding: EdgeInsets.all(0),
+                child: SVGCard(
+                  isNetwork: false,
+                  asset: 'assets/images/bell.svg',
+                  title: 'Notification',
+                ),
+              ),
+              FlatButton(
+                onPressed: () =>
+                    Navigator.pushNamed(context, '/tax_calender'),
+                padding: EdgeInsets.all(0),
+                child: SVGCard(
+                  isNetwork: false,
+                  asset: 'assets/images/calendar.svg',
+                  title: 'Tax Calendar',
+                ),
+              ),
+            ],
+          ),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            direction: Axis.horizontal,
+            children: [
+              FlatButton(
+                onPressed: () {
+                  final RenderBox box = context.findRenderObject();
+                  Share.share('Test',
+                      subject: 'subject',
+                      sharePositionOrigin:
+                          box.localToGlobal(Offset.zero) & box.size);
+                },
+                padding: EdgeInsets.all(0),
+                child: SVGCard(
+                  isNetwork: false,
+                  asset: 'assets/images/share.svg',
+                  title: 'Share',
+                ),
+              ),
+              FlatButton(
+                onPressed: () => Navigator.pushNamed(context, '/about'),
+                padding: EdgeInsets.all(0),
+                child: SVGCard(
+                  isNetwork: false,
+                  asset: 'assets/images/whatsapp.svg',
+                  title: 'About Us',
+                ),
+              ),
+            ],
+          ),
+          _buttonBottom(),
+        ]);
+  }
+
+  Widget _buttonBottom() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
+      width: MediaQuery.of(context).size.width * 0.72,
+      decoration: BoxDecoration(
+        color: darkYellowColor,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      ),
+      child: FlatButton(
+          color: darkYellowColor,
+          onPressed: () => _callWhatsapp(),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            SvgPicture.asset(
+              'assets/images/whatsapp.svg',
+              // color: Colors.white,
+              width: MediaQuery.of(context).size.width * 0.35 / 5,
             ),
-            margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            child: Expanded(
-                child: Container(
-              margin: EdgeInsets.fromLTRB(0, 25, 0, 0),
-              child: SingleChildScrollView(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      // crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      // crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        FlatButton(
-                          padding: EdgeInsets.all(0),
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/income_tax');
-                          },
-                          child: SVGCard(
-                            isNetwork: false,
-                            asset: 'assets/images/invoice.svg',
-                            title: 'Income Tax\nReturn Filling',
-                          ),
-                        ),
-                        FlatButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/reg_new_business'),
-                          padding: EdgeInsets.all(0),
-                          child: SVGCard(
-                            isNetwork: false,
-                            asset: 'assets/images/file.svg',
-                            title: 'Registration/\nNew Business',
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FlatButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/tax_calc'),
-                          padding: EdgeInsets.all(0),
-                          child: SVGCard(
-                            isNetwork: false,
-                            asset: 'assets/images/calculator.svg',
-                            title: 'Tax Calculator',
-                          ),
-                        ),
-                        FlatButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/news'),
-                          padding: EdgeInsets.all(0),
-                          child: SVGCard(
-                            isNetwork: false,
-                            asset: 'assets/images/newspaper.svg',
-                            title: 'News',
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FlatButton(
-                          onPressed: () => Navigator.pushNamed(
-                              context, '/notification_center'),
-                          padding: EdgeInsets.all(0),
-                          child: SVGCard(
-                            isNetwork: false,
-                            asset: 'assets/images/bell.svg',
-                            title: 'Notification',
-                          ),
-                        ),
-                        FlatButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/tax_calender'),
-                          padding: EdgeInsets.all(0),
-                          child: SVGCard(
-                            isNetwork: false,
-                            asset: 'assets/images/calendar.svg',
-                            title: 'Tax Calendar',
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FlatButton(
-                          onPressed: () {
-                            final RenderBox box = context.findRenderObject();
-                            Share.share('Test',
-                                subject: 'subject',
-                                sharePositionOrigin:
-                                    box.localToGlobal(Offset.zero) & box.size);
-                          },
-                          padding: EdgeInsets.all(0),
-                          child: SVGCard(
-                            isNetwork: false,
-                            asset: 'assets/images/share.svg',
-                            title: 'Share',
-                          ),
-                        ),
-                        FlatButton(
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/about'),
-                          padding: EdgeInsets.all(0),
-                          child: SVGCard(
-                            isNetwork: false,
-                            asset: 'assets/images/whatsapp.svg',
-                            title: 'About Us',
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-                      width: MediaQuery.of(context).size.width * 0.72,
-                      decoration: BoxDecoration(
-                        color: darkYellowColor,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                      child: FlatButton(
-                          color: darkYellowColor,
-                          onPressed: () => _callWhatsapp(),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/images/whatsapp.svg',
-                                  // color: Colors.white,
-                                  width: MediaQuery.of(context).size.width *
-                                      0.35 /
-                                      5,
-                                ),
-                                SizedBox(width: 10),
-                                TextWidget(
-                                  text: 'Call/Message',
-                                  font: 'VT323-Regular',
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                )
-                              ])),
-                    )
-                  ])),
-            ))));
+            SizedBox(width: 10),
+            TextWidget(
+              text: 'Call/Message',
+              font: 'VT323-Regular',
+              fontSize: 25,
+              color: Colors.black,
+            )
+          ])),
+    );
   }
 
   _lunchURL(String url) async {

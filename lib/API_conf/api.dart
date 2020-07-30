@@ -2,8 +2,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const API = "http://kodi.cosmicnerds.com/api";
 const API_NO = "http://kodi.cosmicnerds.com/";
-const API_STORAGE = API_NO+"storage/";
+const API_STORAGE = API_NO + "storage/";
 const LOGIN_API = API + "/login";
+const LOGOUT_API = API + "/logout";
 const REGISTER_API = API + "/register";
 const USERS_INDEX_API = API + "/users_index";
 const ABOUT_INFO_INDEX = API + "/about_info_index";
@@ -22,5 +23,19 @@ class AccesTokenG {
   accessTokenStorageF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('access_token') ?? '0';
+  }
+}
+
+class StoreToStorage{
+  storeData(String key, String value) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, value);
+  }
+}
+
+class GetValueFromStorage{
+  getData(String key, String defaultValue)async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key) ?? defaultValue;
   }
 }

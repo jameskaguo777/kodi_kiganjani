@@ -10,6 +10,7 @@ import 'package:kodi_kiganjani/screens/login.dart';
 import 'package:kodi_kiganjani/screens/news.dart';
 import 'package:kodi_kiganjani/screens/news_full.dart';
 import 'package:kodi_kiganjani/screens/notification_center.dart';
+import 'package:kodi_kiganjani/screens/pay_screen.dart';
 import 'package:kodi_kiganjani/screens/reg_new_business.dart';
 import 'package:kodi_kiganjani/screens/register.dart';
 import 'package:kodi_kiganjani/screens/splash_screen.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         '/tax_calender' : (context) => TaxCalender(title: 'Tax Calender',),
         '/notification_center' : (context) => NotificationCenter(),
         '/about' : (context) => AboutPage(),
+        '/payment' : (context) => PayScreen(),
         },
       title: 'Kodi Kiganjani',
       theme: ThemeData(

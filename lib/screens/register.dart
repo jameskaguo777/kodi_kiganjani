@@ -1,5 +1,6 @@
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:kodi_kiganjani/API_conf/api.dart';
 import 'package:kodi_kiganjani/API_conf/api_call.dart';
 import 'package:kodi_kiganjani/colors.dart';
 import 'package:kodi_kiganjani/helpers/auth/login_helper.dart';
@@ -16,11 +17,14 @@ class _Register extends State<Register> {
   String _confirmPassword;
   APICall _apiCall;
   String _email, _password, _fullname, _deviceName = 'Failed';
+  StoreToStorage storeToStorage;
 
   @override
   void initState() {
     super.initState();
     _apiCall = APICall();
+    storeToStorage = StoreToStorage();
+    _getDeviceName();
   }
 
   @override
@@ -210,13 +214,15 @@ class _Register extends State<Register> {
 
   void _register() {
     if (_formKey.currentState.validate()) {
+      storeToStorage.storeData('email', _email);
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               // title: Text("Alert Dialog"),
               content: FutureBuilder<LoginHelper>(
-                future: _apiCall.fetchRegister(_fullname,_email, _password, _deviceName),
+                future: _apiCall.fetchRegister(
+                    _fullname, _email, _password, _deviceName),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -243,6 +249,5 @@ class _Register extends State<Register> {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     _deviceName = androidInfo.model;
-
   }
 }

@@ -9,6 +9,7 @@ import 'package:kodi_kiganjani/helpers/all_helpers.dart';
 import 'package:kodi_kiganjani/widgets/card_body.dart';
 import 'package:kodi_kiganjani/widgets/svg_card.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,6 +56,7 @@ class _HomeState extends State<Home> {
                             children: [
                               _title(),
                               _connectivityWidget(),
+                              _subscriber(),
                               _bodyCard(context),
                             ]),
                       ),
@@ -77,18 +79,155 @@ class _HomeState extends State<Home> {
             color: lightBrown,
           ),
           FlatButton.icon(
-              onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString('access_token', '0');
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Navigator.of(context).pushReplacementNamed('/login');
-                });
+              onPressed: () {
+                _logout();
               },
               icon: Icon(Icons.exit_to_app),
-              label: Text('Logout')),
+              label: TextWidget(
+                  text: 'Logout',
+                  color: Colors.black87,
+                  font: 'Poppins-Bold',
+                  fontSize: 10)),
         ],
       ),
     );
+  }
+
+  // Widget _logout() {
+  //   return FutureBuilder(
+  //       future: _futureToken,
+  //       builder: (context, snapshot) {
+  //         if (snapshot.hasData) {
+  //           FutureBuilder<LogoutHelper>(
+  //               future: _apiCall.fetchLogoutT(snapshot.data),
+  //               builder: (context, snapshot) {
+  //                 if (snapshot.hasData) {
+  //                   _resetToken();
+  //                   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //                     Navigator.of(context).pushReplacementNamed('/login');
+  //                   });
+  //                 } else if (snapshot.hasError) {
+  //                   return Text(snapshot.error);
+  //                 }
+  //                 return AlertDialog(
+  //                   content: CircularProgressIndicator(),
+  //                 );
+  //               });
+  //           return AlertDialog(
+  //             content: CircularProgressIndicator(),
+  //           );
+  //         }
+  //       });
+  // }
+
+  Future _logout() async {
+    String token;
+    showDialog(
+        context: context,
+        builder: (_) {
+          return Container(
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width * .5,
+              height: MediaQuery.of(context).size.width * .5,
+              child: CircularProgressIndicator());
+        });
+
+    _futureToken.then((value) => token = value).whenComplete(() {
+      _apiCall.fetchLogoutT(token).then((value) {
+        if (value.logout == 'logout') {
+          Navigator.pop(context);
+          _resetToken();
+          Navigator.of(context).pushReplacementNamed('/login');
+        }
+      }).catchError((error) {
+        Navigator.pop(context);
+        _resetToken();
+        showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                content: Text(error.toString()),
+              );
+            });
+      });
+    });
+  }
+
+  Widget _subscriber() {
+    // String token;
+    // _futureToken.then((value) => token = value).whenComplete(() {
+    //   _apiCall.fetchSubscriber(token).then((value) {
+    //     if (value.data == '0') {
+
+    //     } else {
+
+    //     }
+    //   }).catchError((error) {
+    //     Navigator.pop(context);
+    //     // _resetToken();
+    //     showDialog(
+    //         context: context,
+    //         builder: (_) {
+    //           return AlertDialog(
+    //             content: Text(error.toString()),
+    //           );
+    //         });
+    //   });
+    // });
+    return FutureBuilder<dynamic>(
+        future: _futureToken,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return FutureBuilder<SubscriberHelper>(
+                future: _apiCall.fetchSubscriber(snapshot.data),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data.remainingDays == 0) {
+                      _resetPaid();
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.red,
+                        child: Center(
+                          child: TextWidget(
+                              text:
+                                  'Your subscription has expired',
+                              color: Colors.white,
+                              font: 'Poppins-Bold',
+                              fontSize: 14),
+                        ),
+                      );
+                    } 
+
+                  } else if(snapshot.hasError){
+                    _resetPaid();
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.red,
+                        child: Center(
+                          child: TextWidget(
+                              text:
+                                  'Your subscription has expired',
+                              color: Colors.white,
+                              font: 'Poppins-Bold',
+                              fontSize: 14),
+                        ),
+                      );
+                  }
+                  return Text('');
+                });
+          } else {}
+          return Text('');
+        });
+  }
+
+  _resetToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('access_token', '0');
+  }
+
+  _resetPaid() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('paid', '0');
   }
 
   Widget _connectivityWidget() {
@@ -204,8 +343,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               FlatButton(
-                onPressed: () =>
-                    Navigator.pushNamed(context, '/tax_calender'),
+                onPressed: () => Navigator.pushNamed(context, '/tax_calender'),
                 padding: EdgeInsets.all(0),
                 child: SVGCard(
                   isNetwork: false,

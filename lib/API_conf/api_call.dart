@@ -13,7 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class APICall {
   AccesTokenG accessToken = AccesTokenG();
-  Future<LoginHelper> fetchToken(String email, String password, String deviceName) async {
+  Future<LoginHelper> fetchToken(
+      String email, String password, String deviceName) async {
     String jsonData = json.encode({
       'email': email,
       'password': password,
@@ -43,7 +44,8 @@ class APICall {
     }
   }
 
-  Future<LoginHelper> fetchRegister(String fullname, String email, String password, String deviceName) async {
+  Future<LoginHelper> fetchRegister(
+      String fullname, String email, String password, String deviceName) async {
     String jsonData = json.encode({
       'name': fullname,
       'email': email,
@@ -74,22 +76,53 @@ class APICall {
     }
   }
 
-  Future<IncomeTaxHelper> fetchIncomeTax(String token) async {
-    final response = await http.get(
-     INCOME_TAX_INDEX,
+  Future<dynamic> payService(
+      String amount, String email, String subTime, String packageId, String number, String token) async {
+    String jsonData = json.encode({
+      'number': number,
+      'email': email,
+      'sub_time': subTime,
+      'amount': amount,
+      'package_id' : packageId
+    });
+
+    // print(response.body);
+    final response = await http.post(
+      PAYMENT_API,
+      body: jsonData,
       headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-Type' : 'application/json',
-        
-        }
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    },
     );
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
+      // dynamic token =
+      //     LoginHelper.fromJson(json.decode(response.body)).accessToken;
+      // print(LoginHelper.fromJson(json.decode(response.body)).accessToken);
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // await prefs.setString('access_token', token);
+      return json.decode(response.body);
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('${response.body} ');
+    }
+  }
 
-      debugPrint('APICallddf ' +
-          response.body.toString(), wrapWidth: 1024);
+  Future<IncomeTaxHelper> fetchIncomeTax(String token) async {
+    final response = await http.get(INCOME_TAX_INDEX, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+      debugPrint('APICallddf ' + response.body.toString(), wrapWidth: 1024);
 
       return IncomeTaxHelper.fromJson(json.decode(response.body));
       // return response.body.toString();
@@ -106,21 +139,16 @@ class APICall {
       };
 
   Future<NewBusinessHelper> fetchNewBusiness(String token) async {
-    final response = await http.get(
-     REG_NEW_BUSINESS_INDEX,
-      headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-Type' : 'application/json',
-        
-        }
-    );
+    final response = await http.get(REG_NEW_BUSINESS_INDEX, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
 
-      debugPrint('APICallddf ' +
-          response.body.toString(), wrapWidth: 1024);
+      debugPrint('APICallddf ' + response.body.toString(), wrapWidth: 1024);
 
       return NewBusinessHelper.fromJson(json.decode(response.body));
       // return response.body.toString();
@@ -132,14 +160,10 @@ class APICall {
   }
 
   Future<TaxCalculatorHelper> fetchTaxCalc(String token) async {
-    final response = await http.get(
-     TAX_CALCULATOR_INDEX_API,
-      headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-Type' : 'application/json',
-        
-        }
-    );
+    final response = await http.get(TAX_CALCULATOR_INDEX_API, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -157,109 +181,119 @@ class APICall {
     }
   }
 
-
   Future<NewsPostHelper> fetchNewsPosts(String token) async {
-    final response = await http.get(
-     NEWS_POST_INDEX_API,
-      headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-Type' : 'application/json',
-        
-        }
-    );
+    final response = await http.get(NEWS_POST_INDEX_API, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
-      
-
       return NewsPostHelper.fromJson(json.decode(response.body));
       // return response.body.toString();
     } else {
-      
       throw Exception('${response.body} Error');
     }
   }
 
   Future<AboutInfoHelper> fetchAboutInfo(String token) async {
-    final response = await http.get(
-     ABOUT_INFO_INDEX,
-      headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-Type' : 'application/json',
-        
-        }
-    );
+    final response = await http.get(ABOUT_INFO_INDEX, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
-      
-
       return AboutInfoHelper.fromJson(json.decode(response.body));
       // return response.body.toString();
     } else {
-      
       throw Exception('${response.body} Error');
     }
   }
 
-
   Future<NotificationCenterHelper> fetchNotificationT(String token) async {
-    final response = await http.get(
-     NOTIFICATION_CENTER_INDEX_API,
-      headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-Type' : 'application/json',
-        
-        }
-    );
+    final response = await http.get(NOTIFICATION_CENTER_INDEX_API, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
-      
-
       return NotificationCenterHelper.fromJson(json.decode(response.body));
       // return response.body.toString();
     } else {
-      
       throw Exception('${response.body} Error');
     }
   }
 
   Future<TaxCalenderHelper> fetchTaxCalenderT(String token) async {
-    final response = await http.get(
-     TAX_CALENDER_INDEX_API,
-      headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-Type' : 'application/json',
-        
-        }
-    );
+    final response = await http.get(TAX_CALENDER_INDEX_API, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
-      
-
       return TaxCalenderHelper.fromJson(json.decode(response.body));
       // return response.body.toString();
     } else {
-      
       throw Exception('${response.body} Error');
     }
   }
 
   Future<ContactHelper> fetchContactsT(String token) async {
-    final response = await http.get(
-     CONTACT_INFO_INDEX,
-      headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token",
-        'Content-Type' : 'application/json',
-        
-        }
-    );
+    final response = await http.get(CONTACT_INFO_INDEX, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
-      
-
       return ContactHelper.fromJson(json.decode(response.body));
       // return response.body.toString();
     } else {
+      throw Exception('${response.body} Error');
+    }
+  }
+
+  Future<LogoutHelper> fetchLogoutT(String token) async {
+    final response = await http.get(LOGOUT_API, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      return LogoutHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
+    } else {
+      throw Exception('${response.body} Error');
+    }
+  }
+
+  Future<SubscriberHelper> fetchSubscriber(String token) async {
+    final response = await http.get(SUBSCRIBER_INDEX_API, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      return SubscriberHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
+    } else {
+      throw Exception('${response.body} Error');
+    }
+  }
+
+  Future<PackagesHelper> fetchPackages(String token) async {
+    final response = await http.get(PACKAGES_INDEX_API, headers: {
+      HttpHeaders.authorizationHeader: "Bearer $token",
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      debugPrint(response.body);
+      return PackagesHelper.fromJson(json.decode(response.body));
+      // return response.body.toString();
       
+    } else {
       throw Exception('${response.body} Error');
     }
   }

@@ -43,6 +43,7 @@ dependencies:
   firebase_messaging: ^6.0.16
   device_info: ^0.4.2+4
   firebase_crashlytics: ^0.1.4+1
+  modal_bottom_sheet: ^0.2.0+1
 
 dev_dependencies:
   flutter_test:

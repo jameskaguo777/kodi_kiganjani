@@ -1,5 +1,6 @@
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:kodi_kiganjani/API_conf/api.dart';
 import 'package:kodi_kiganjani/API_conf/api_call.dart';
 import 'package:kodi_kiganjani/colors.dart';
 import 'package:kodi_kiganjani/helpers/auth/login_helper.dart';
@@ -17,12 +18,16 @@ class _Login extends State<Login> {
   APICall _apiCall;
   String _email, _password;
   String _deviceName = 'Failed';
+  GetValueFromStorage getValueFromStorage;
+  StoreToStorage storeToStorage;
 
   @override
   void initState() {
     super.initState();
     _apiCall = APICall();
     _getDeviceName();
+    getValueFromStorage = GetValueFromStorage();
+    storeToStorage = StoreToStorage();
   }
 
   @override
@@ -165,6 +170,7 @@ class _Login extends State<Login> {
 
   void _login() {
     if (_formKey.currentState.validate()) {
+      storeToStorage.storeData('email', _email);
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -204,6 +210,5 @@ class _Login extends State<Login> {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     _deviceName = androidInfo.model;
-
   }
 }

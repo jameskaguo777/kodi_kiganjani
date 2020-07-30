@@ -74,3 +74,40 @@ class ContactHelper {
     );
   }
 }
+
+class LogoutHelper {
+  final String logout;
+
+  LogoutHelper({this.logout});
+
+  factory LogoutHelper.fromJson(Map<String, dynamic> json) {
+    return LogoutHelper(
+      logout: json['logout'],
+    );
+  }
+}
+
+class SubscriberHelper {
+  final Map<String, dynamic> data;
+  final int active;
+  final int remainingDays;
+
+  SubscriberHelper({this.data, this.active, this.remainingDays});
+
+  factory SubscriberHelper.fromJson(Map<String, dynamic> json) {
+    return SubscriberHelper(
+        data: json['data'][0],
+        active: json['data'][0]['active'],
+        remainingDays: json['data'][0]['remaining_days']);
+  }
+}
+
+class PackagesHelper {
+  final List<dynamic> data;
+
+  PackagesHelper({this.data});
+
+  factory PackagesHelper.fromJson(Map<String, dynamic> json) {
+    return PackagesHelper(data: json['data']);
+  }
+}

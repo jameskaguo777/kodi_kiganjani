@@ -55,7 +55,7 @@ class _TaxCalc extends State<TaxCalc> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  FutureBuilder(
+                  FutureBuilder<dynamic>(
                       future: _futureToken,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
@@ -111,7 +111,7 @@ class _TaxCalc extends State<TaxCalc> {
                                     "Something went wrong ${snapshot.error}")
                               ]);
                         }
-                        return Text(snapshot.error);
+                        return Text('');
                       }),
                 ]),
           )),

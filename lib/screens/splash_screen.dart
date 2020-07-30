@@ -44,6 +44,10 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.black,
                 font: 'Poppins-Bold',
                 fontSize: 30),
+                Container(
+                  width: MediaQuery.of(context).size.width*.5,
+                  height: MediaQuery.of(context).size.width*.5,
+                  child: Image.asset('assets/images/kodi.png')),
             FutureBuilder<dynamic>(
               future: accessToken.accessTokenStorageF(),
               builder: (context, snapshot) {

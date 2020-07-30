@@ -10,6 +10,7 @@ import 'package:kodi_kiganjani/widgets/card_body.dart';
 import 'package:kodi_kiganjani/widgets/svg_card.dart';
 import 'package:kodi_kiganjani/widgets/text_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:package_info/package_info.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,6 +30,8 @@ class _HomeState extends State<Home> {
   APICall _apiCall;
   AccesTokenG _accesTokenG;
   Future<dynamic> _futureToken;
+  String packageName;
+  final String googleUrl = 'https://play.google.com/store/apps/details?id=';
 
   @override
   void initState() {
@@ -37,6 +40,13 @@ class _HomeState extends State<Home> {
     _accesTokenG = AccesTokenG();
     _apiCall = APICall();
     _futureToken = _accesTokenG.accessTokenStorageF();
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      // String appName = packageInfo.appName;
+
+      packageName = packageInfo.packageName;
+      // String version = packageInfo.version;
+      // String buildNumber = packageInfo.buildNumber;
+    });
   }
 
   @override
@@ -189,29 +199,26 @@ class _HomeState extends State<Home> {
                         color: Colors.red,
                         child: Center(
                           child: TextWidget(
-                              text:
-                                  'Your subscription has expired',
+                              text: 'Your subscription has expired',
                               color: Colors.white,
                               font: 'Poppins-Bold',
                               fontSize: 14),
                         ),
                       );
-                    } 
-
-                  } else if(snapshot.hasError){
+                    }
+                  } else if (snapshot.hasError) {
                     _resetPaid();
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        color: Colors.red,
-                        child: Center(
-                          child: TextWidget(
-                              text:
-                                  'Your subscription has expired',
-                              color: Colors.white,
-                              font: 'Poppins-Bold',
-                              fontSize: 14),
-                        ),
-                      );
+                    return Container(
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.red,
+                      child: Center(
+                        child: TextWidget(
+                            text: 'Your subscription has expired',
+                            color: Colors.white,
+                            font: 'Poppins-Bold',
+                            fontSize: 14),
+                      ),
+                    );
                   }
                   return Text('');
                 });
@@ -360,8 +367,8 @@ class _HomeState extends State<Home> {
               FlatButton(
                 onPressed: () {
                   final RenderBox box = context.findRenderObject();
-                  Share.share('Test',
-                      subject: 'subject',
+                  Share.share('Here is useful app I use for Tax '+googleUrl+'com.memtechnologies.kodi_kiganjani',
+                      subject: 'Share App',
                       sharePositionOrigin:
                           box.localToGlobal(Offset.zero) & box.size);
                 },
@@ -377,7 +384,7 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.all(0),
                 child: SVGCard(
                   isNetwork: false,
-                  asset: 'assets/images/whatsapp.svg',
+                  asset: 'assets/images/kodikiganjani.svg',
                   title: 'About Us',
                 ),
               ),

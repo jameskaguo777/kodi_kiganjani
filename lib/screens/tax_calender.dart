@@ -11,11 +11,11 @@ import 'package:table_calendar/table_calendar.dart';
 
 // Example holidays
 final Map<DateTime, List> _holidays = {
-  DateTime(2019, 1, 1): ['New Year\'s Day'],
-  DateTime(2019, 1, 6): ['Epiphany'],
-  DateTime(2019, 2, 14): ['Valentine\'s Day'],
-  DateTime(2019, 4, 21): ['Easter Sunday'],
-  DateTime(2019, 4, 22): ['Easter Monday'],
+  // DateTime(2019, 1, 1): ['New Year\'s Day'],
+  // DateTime(2019, 1, 6): ['Epiphany'],
+  // DateTime(2019, 2, 14): ['Valentine\'s Day'],
+  // DateTime(2019, 4, 21): ['Easter Sunday'],
+  // DateTime(2019, 4, 22): ['Easter Monday'],
 };
 
 class TaxCalender extends StatefulWidget {
@@ -46,11 +46,11 @@ class _TaxCalender extends State<TaxCalender> with TickerProviderStateMixin {
     final _selectedDay = DateTime.now();
 
     _events = {
-      _selectedDay.subtract(Duration(days: 30)): [
-        'PayTax',
-        'Event B0',
-        'Event C0'
-      ],
+      // _selectedDay.subtract(Duration(days: 30)): [
+      //   'PayTax',
+      //   'Event B0',
+      //   'Event C0'
+      // ],
     };
 
     _selectedEvents = _events[_selectedDay] ?? [];

@@ -5,6 +5,7 @@ import 'package:kodi_kiganjani/API_conf/api.dart';
 import 'package:kodi_kiganjani/API_conf/api_call.dart';
 import 'package:kodi_kiganjani/colors.dart';
 import 'package:kodi_kiganjani/controllers/connectivity_co.dart';
+import 'package:kodi_kiganjani/controllers/push_notifications_manager.dart';
 import 'package:kodi_kiganjani/helpers/all_helpers.dart';
 import 'package:kodi_kiganjani/widgets/card_body.dart';
 import 'package:kodi_kiganjani/widgets/svg_card.dart';
@@ -26,6 +27,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   ConnectivityCo connectivityCo;
+  PushNotificationsManager pushNotificationsManager;
 
   APICall _apiCall;
   AccesTokenG _accesTokenG;
@@ -36,6 +38,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    pushNotificationsManager = PushNotificationsManager();
+    pushNotificationsManager.init();
     connectivityCo = ConnectivityCo();
     _accesTokenG = AccesTokenG();
     _apiCall = APICall();
@@ -367,7 +371,10 @@ class _HomeState extends State<Home> {
               FlatButton(
                 onPressed: () {
                   final RenderBox box = context.findRenderObject();
-                  Share.share('Here is useful app I use for Tax '+googleUrl+'com.memtechnologies.kodi_kiganjani',
+                  Share.share(
+                      'Here is useful app I use for Tax ' +
+                          googleUrl +
+                          'com.memtechnologies.kodi_kiganjani',
                       subject: 'Share App',
                       sharePositionOrigin:
                           box.localToGlobal(Offset.zero) & box.size);

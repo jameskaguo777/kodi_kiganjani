@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
+import 'package:kodi_kiganjani/controllers/push_notifications_manager.dart';
 import 'package:kodi_kiganjani/screens/about.dart';
 
 import 'package:kodi_kiganjani/screens/home.dart';
@@ -20,6 +21,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 void main() {
   Crashlytics.instance.enableInDevMode = true;
+  
 
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
@@ -41,34 +43,34 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/',
-      routes:{ 
-        '/' : (context)=> SplashScreen(),
-        '/login' : (context) => Login(),
-        '/register' : (context) => Register(),
-        '/home' : (context)=> Home(title: 'Kodi Kiganjani'),
-        '/tax_calc' : (context) => TaxCalc(),
-        '/income_tax' : (context) => IncomeTax(),
-        '/reg_new_business' : (context) => RegNewBusiness(),
-        '/news' : (context) => News(),
-        '/news_full' : (context) => NewsFull(),
-        '/tax_calender' : (context) => TaxCalender(title: 'Tax Calender',),
-        '/notification_center' : (context) => NotificationCenter(),
-        '/about' : (context) => AboutPage(),
-        '/payment' : (context) => PayScreen(),
-        },
+      routes: {
+        '/': (context) => SplashScreen(),
+        '/login': (context) => Login(),
+        '/register': (context) => Register(),
+        '/home': (context) => Home(title: 'Kodi Kiganjani'),
+        '/tax_calc': (context) => TaxCalc(),
+        '/income_tax': (context) => IncomeTax(),
+        '/reg_new_business': (context) => RegNewBusiness(),
+        '/news': (context) => News(),
+        '/news_full': (context) => NewsFull(),
+        '/tax_calender': (context) => TaxCalender(
+              title: 'Tax Calender',
+            ),
+        '/notification_center': (context) => NotificationCenter(),
+        '/about': (context) => AboutPage(),
+        '/payment': (context) => PayScreen(),
+      },
       title: 'Kodi Kiganjani',
       theme: ThemeData(
-        
         primarySwatch: Colors.yellow,
-       
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       // home: Home(title: 'Kodi Kiganjani'),
     );
   }
 }
-
